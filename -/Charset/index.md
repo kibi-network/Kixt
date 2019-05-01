@@ -3,7 +3,7 @@
 ## Abstract {#abstract}
 
 The following specification defines a mechanism for defining character sets (*charsets*) which may be used in a [Kixt document] or rendering system.
-[Kixt charsets][Kixt charset] are, as their name implies, sets of [Kixt characters][Kixt character], mapping each one to a codepoint and assigning it particular character properties.
+[Kixt charsets][charset] are, as their name implies, sets of [Kixt characters][character], mapping each one to a codepoint and assigning it particular character properties.
 This document details the meaning of these properties within the [Kixt Charset Model].
 Finally, this document introduces a plain-text document format, the [Kixt Charset Definition], for describing such charsets.
 
@@ -40,7 +40,7 @@ In Kixt, all codepoints are integer values between `0` and `65535`, inclusive.
 
 A <dfn id="dfn.charset">Kixt charset</dfn> is a collection of [Kixt characters][character].
 
-Within a [Kixt charset], [characters][character] may be collected into <dfn id="dfn.block">blocks</dfn>.
+Within a [Kixt charset][charset], [characters][character] may be collected into <dfn id="dfn.block">blocks</dfn>.
 Blocks may have “gaps,” but must otherwise be contiguous across assigned characters; this is enforced by the [Kixt Charset Definition] syntax.
 Each character may belong to only one block.
 
