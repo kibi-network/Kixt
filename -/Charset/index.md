@@ -1,4 +1,4 @@
-# Kixt Charset #
+# Kixt Charset
 
 ## Abstract {#abstract}
 
@@ -372,7 +372,7 @@ IRI-unreserved =
 ```
 {: id="prod.IRI-unreserved"}
 ```abnf
-URI-scheme = Alpha *(Alpha / Decimal / %x2B %x2D %x2E)
+URI-scheme = Alpha *(Alpha / Decimal / %x2B / %x2D-2E)
 ```
 {: id="prod.URI-scheme"}
 ```abnf
@@ -433,16 +433,16 @@ URI-IPv4address =
 {: id="prod.URI-IPv4address"}
 ```abnf
 URI-dec-octet =
-	Decimal
-		; 0--9
-	/ NonZero Decimal
-		; 10--99
-	/ One 2Decimal
-		; 100--199
+	%x32 %x35 %x30-35
+		; 250--255
 	/ %x32 %x30-34 Decimal
 		; 200--249
-	/ %x32 %x35 %x30-35
-		; 250--255
+	/ One 2Decimal
+		; 100--199
+	/ NonZero Decimal
+		; 10--99
+	/ Decimal
+		; 0--9
 ```
 {: id="prod.URI-dec-octet"}
 ```abnf
@@ -525,27 +525,38 @@ Hyphens and spaces must not end a name or appear in sequence.
 Hyphens must not be surrounded by spaces, and digits must not be preceded by a space.
 
 ```
-Codepoint = *Zero 1*4UpperHex
+Codepoint =
+	*Zero NonZeroHex *3UpperHex
+		; Any nonzero value
+	/ 1*Zero
+		; Zero
 ```
 {: id="prod.Codepoint"}
 ```abnf
 UnicodeCodepoint =
-	%x55 %x2B *Zero
-	[One Zero / NonZeroHex]
-	*4UpperHex
+	%x55 %x2B
+	(
+		*Zero (One Zero / NonZeroHex) *4UpperHex
+			; Any nonzero value
+		/ 1*Zero
+			; Zero
+	)
 ```
 {: id="prod.UnicodeCodepoint"}
 ```abnf
 BinaryCodepoint =
-	*(Zero [Space])
-	Bit
-	*15([Space] Bit)
+	*(Zero [Space]) One *15([Space] Bit)
+	/ 1*(Zero [Space])
 ```
 {: id="prod.BinaryCodepoint"}
 ```abnf
 Integer = 1*4UpperHex
 ```
 {: id="prod.Integer"}
+
+<div role="note" markdown="block">
+The rules defined above are designed to facilitate first-match-wins, greedy matching.
+</div>
 
 Ordinary codepoints must be hexadecimal numbers in the range `0000`–`FFFF` but may be preceded by any number of zeroes.
 
@@ -580,7 +591,7 @@ CharsetDeclaration =
 	IRI [
 		%x5E Integer
 		[%x2E Integer]
-	] Break
+	] *Space Break
 ```
 {: id="prod.CharsetDeclaration"}
 
@@ -941,19 +952,21 @@ Combines = SegmentationClass [%x40 Integer]
 AdditionalProperties =
 	[
 		*Space %x21
-		(
-			*Space Deprecated [
-				*Space CharacterWidth [
-					*Space ConjoiningMode
-				]
-				/ *Space Conjoins
-				/ *Space Combines
+		*Space (
+			Deprecated [
+				*Space (
+					CharacterWidth [
+						*Space ConjoiningMode
+					]
+					/ Conjoins
+					/ Combines
+				)
 			]
-			/ *Space CharacterWidth [
+			/ CharacterWidth [
 				*Space ConjoiningMode
 			]
-			/ *Space Conjoins
-			/ *Space Combines
+			/ Conjoins
+			/ Combines
 		)
 		*Space Break
 	]
@@ -1077,7 +1090,7 @@ Upon reaching a [`<References>`], for each [`<Codepoint>`]:
 Glyph =
 	*Space %x23
 	*Space Bit
-	31*([Space / *Space Break *Space] Bit)
+	31*([*Space Break *Space / Space] Bit)
 	*Space Break
 ```
 {: id="prod.Glyph"}

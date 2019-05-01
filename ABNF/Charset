@@ -188,7 +188,7 @@ IRI-unreserved =
 	/ UCSChar
 
 ; Line 373:
-URI-scheme = Alpha *(Alpha / Decimal / %x2B %x2D %x2E)
+URI-scheme = Alpha *(Alpha / Decimal / %x2B / %x2D-2E)
 
 ; Line 377:
 URI-port = *Decimal
@@ -241,16 +241,16 @@ URI-IPv4address =
 
 ; Line 433:
 URI-dec-octet =
-	Decimal
-		; 0--9
-	/ NonZero Decimal
-		; 10--99
-	/ One 2Decimal
-		; 100--199
+	%x32 %x35 %x30-35
+		; 250--255
 	/ %x32 %x30-34 Decimal
 		; 200--249
-	/ %x32 %x35 %x30-35
-		; 250--255
+	/ One 2Decimal
+		; 100--199
+	/ NonZero Decimal
+		; 10--99
+	/ Decimal
+		; 0--9
 
 ; Line 447:
 URI-pct-encoded = %x25 Hex Hex
@@ -304,49 +304,52 @@ Name =
 	)
 		; Valid character, block, and script names
 
-; Line 530:
+; Line 534:
 UnicodeCodepoint =
-	%x55 %x2B *Zero
-	[One Zero / NonZeroHex]
-	*4UpperHex
+	%x55 %x2B
+	(
+		*Zero (One Zero / NonZeroHex) *4UpperHex
+			; Any nonzero value
+		/ 1*Zero
+			; Zero
+	)
 
-; Line 537:
+; Line 545:
 BinaryCodepoint =
-	*(Zero [Space])
-	Bit
-	*15([Space] Bit)
+	*(Zero [Space]) One *15([Space] Bit)
+	/ 1*(Zero [Space])
 
-; Line 544:
+; Line 551:
 Integer = 1*4UpperHex
 
-; Line 561:
+; Line 572:
 Comment =
 	*Space %x7C
 	*Space CommentString
 	*Space Break
 
-; Line 575:
+; Line 586:
 CharsetDeclaration =
 	%x43.48.41.52.53.45.54.40
 		; `CHARSET@`
 	IRI [
 		%x5E Integer
 		[%x2E Integer]
-	] Break
+	] *Space Break
 
-; Line 600:
+; Line 611:
 BlockDeclaration =
 	*Space %x25
 	*Space Name
 	*Space Break
 
-; Line 620:
+; Line 631:
 ScriptDeclaration =
 	*Space %x40
 	*Space IRI
 	*Space Break
 
-; Line 646:
+; Line 657:
 CharacterDefinition =
 	UnicodeMapping
 	CharacterInfo
@@ -359,7 +362,7 @@ CharacterDefinition =
 	[References]
 	[Glyphs]
 
-; Line 674:
+; Line 685:
 UnicodeMapping =
 	1*(
 		*Space UnicodeCodepoint
@@ -367,7 +370,7 @@ UnicodeMapping =
 		*Space Break
 	)
 
-; Line 723:
+; Line 734:
 BasicType =
 	%x43.4F.4E.54.52.4F.4C
 		; `CONTROL`
@@ -387,7 +390,7 @@ BasicType =
 		; `NONCHARACTER`
 	; It is not possible to define an `UNASSIGNED` character
 
-; Line 744:
+; Line 755:
 CharacterInfo =
 	*Space %x3A
 	*Space (Codepoint / BinaryCodepoint *Space %x7C)
@@ -395,7 +398,7 @@ CharacterInfo =
 	*Space %x5B BasicType %x5D
 	*Space Break
 
-; Line 778:
+; Line 789:
 CompatibilityMapping =
 	[
 		*Space %x7E
@@ -404,7 +407,7 @@ CompatibilityMapping =
 		*Space Break
 	]
 
-; Line 837:
+; Line 848:
 DecompositionMapping =
 	[
 		(
@@ -418,100 +421,102 @@ DecompositionMapping =
 		)
 	]
 
-; Line 903:
+; Line 914:
 Deprecated = %x44.45.50.52.45.43.41.54.45.44
 	; `DEPRECATED`
 
-; Line 908:
+; Line 919:
 CharacterWidth =
 	%x50.52.4F.50.4F.52.54.49.4F.4E.41.4C
 		; `PROPORTIONAL`
 	/ %x46.55.4C.4C.57.49.44.54.48
 		; `FULLWIDTH`
 
-; Line 916:
+; Line 927:
 SegmentationClass =
 	%x45.58.54.45.4E.44.53
 		; `EXTENDS`
 	/ %x44.49.56.49.44.45.53
 		; `DIVIDER`
 
-; Line 924:
+; Line 935:
 ConjoiningMode =
 	%x43.4F.4E.4A.4F.49.4E.53.40
 		; `CONJOINS@`
 	IRI
 
-; Line 931:
+; Line 942:
 Conjoins = ConjoiningMode [%x7C Integer]
 
-; Line 935:
+; Line 946:
 Combines = SegmentationClass [%x40 Integer]
 
-; Line 939:
+; Line 950:
 AdditionalProperties =
 	[
 		*Space %x21
-		(
-			*Space Deprecated [
-				*Space CharacterWidth [
-					*Space ConjoiningMode
-				]
-				/ *Space Conjoins
-				/ *Space Combines
+		*Space (
+			Deprecated [
+				*Space (
+					CharacterWidth [
+						*Space ConjoiningMode
+					]
+					/ Conjoins
+					/ Combines
+				)
 			]
-			/ *Space CharacterWidth [
+			/ CharacterWidth [
 				*Space ConjoiningMode
 			]
-			/ *Space Conjoins
-			/ *Space Combines
+			/ Conjoins
+			/ Combines
 		)
 		*Space Break
 	]
 
-; Line 983:
+; Line 996:
 Alias =
 	*Space %x3D
 	*Space Name
 	*Space Break
 
-; Line 990:
+; Line 1003:
 Aliases = 1*Alias
 
-; Line 1003:
+; Line 1016:
 OtherName =
 	*Space %x2D
 	*Space NonEmptyString
 	*Space Break
 
-; Line 1010:
+; Line 1023:
 OtherNames = 1*OtherName
 
-; Line 1023:
+; Line 1036:
 Note =
 	*Space %x2A
 	*Space NonEmptyString
 	*Space Break
 
-; Line 1030:
+; Line 1043:
 Notes = 1*Note
 
-; Line 1043:
+; Line 1056:
 Reference =
 	*Space %x3E
 	*Space Codepoint
 	[1*Space CommentString]
 	*Space Break
 
-; Line 1051:
+; Line 1064:
 References = 1*Reference
 
-; Line 1075:
+; Line 1088:
 Glyph =
 	*Space %x23
 	*Space Bit
-	31*([Space / *Space Break *Space] Bit)
+	31*([*Space Break *Space / Space] Bit)
 	*Space Break
 
-; Line 1083:
+; Line 1096:
 Glyphs = 1*Glyph
