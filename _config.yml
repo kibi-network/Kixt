@@ -1,0 +1,15 @@
+title: Kixt
+repository: kibi-network/Kixt
+owner_name: KIBI Network Specifications
+owner_url: https://spec.KIBI.network/
+permalink: pretty
+timezone: America/Los_Angeles
+exclude:
+- Makefile
+- package.json
+- package-lock.json
+- Scripts/
+kramdown:
+  toc_levels: 2..4
+  gfm_quirks: no_auto_typographic
+  smart_quotes: apos,apos,quot,quot

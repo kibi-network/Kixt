@@ -1,0 +1,512 @@
+; Generated from the Markdown source of Kixt Charset.
+
+; Line 108:
+CharsetDefinition =
+	[%xFEFF] CharsetDeclaration *(
+		BlockDeclaration
+		/ ScriptDeclaration
+		/ CharacterDefinition
+		/ Comment
+		/ Blank
+	)
+
+; Line 127:
+Break = %x2028
+	; A Unicode line separator
+
+; Line 145:
+Space = %x20
+	; An ordinary Unicode breaking space
+Blank = *Space Break
+	; A line consisting only of whitespace
+
+; Line 156:
+ASCIIChar = %x21-7E
+	; Non-control, non-space ASCII characters
+
+; Line 161:
+UCSChar =
+	%xA0-D7FF / %xF900-FDCF / %xFDF0-FFEF
+		; Basic Multilingual Plane
+		; (minus surrogates and specials)
+	/ %x10000-1FFFD
+		; Supplementary Multilingual Plane
+	/ %x20000-2FFFD
+		; Supplementary Ideographic Plane
+	/ %x30000-3FFFD
+		; Tertiary Ideographic Plane
+	/ %x40000-4FFFD
+		; Plane 4
+	/ %x50000-5FFFD
+		; Plane 5
+	/ %x60000-6FFFD
+		; Plane 6
+	/ %x70000-7FFFD
+		; Plane 7
+	/ %x80000-8FFFD
+		; Plane 8
+	/ %x90000-9FFFD
+		; Plane 9
+	/ %xA0000-AFFFD
+		; Plane 10
+	/ %xB0000-BFFFD
+		; Plane 11
+	/ %xC0000-CFFFD
+		; Plane 12
+	/ %xD0000-DFFFD
+		; Plane 13
+	/ %xE1000-EFFFD
+		; Supplementary Special-purpose Plane
+		; Note the first 1000 characters are excluded
+	; Non-special, non-privateuse, non-ASCII characters
+	; This is the same definition as used for IRIs
+
+; Line 199:
+PrivateUse = %xE000-F8FF / %xF0000-FFFFD / %x100000-10FFFD
+	; Unicode private-use characters
+
+; Line 208:
+NoSpace = ASCIIChar / UCSChar / PrivateUse
+
+; Line 212:
+NoBreak = NoSpace / Space
+
+; Line 216:
+AnyChar = NoBreak / Break
+
+; Line 223:
+Zero = %x30
+
+; Line 227:
+One = %x31
+
+; Line 231:
+Bit = Zero / One
+
+; Line 235:
+NonZero = %x31-39
+
+; Line 239:
+Decimal = %x30-39
+
+; Line 246:
+NonZeroHex = %x31-39 / %x41-46
+
+; Line 250:
+UpperHex = %x30-39 / %x41-46
+
+; Line 254:
+Hex = %x30-39 / %x41-46 / %x61-66
+	; Case-insensitive hexadecimal used by IRI syntax
+
+; Line 263:
+UpperAlpha = %x41-5A
+
+; Line 267:
+Alpha = %x41-5A / %x61-7A
+
+; Line 275:
+IRI =
+	URI-scheme %x3A IRI-hier-part
+	[%x3F IRI-query]
+	[%x23 IRI-fragment]
+
+; Line 282:
+IRI-hier-part =
+	%x2F.2F IRI-authority IRI-path-abempty
+	/ IRI-path-absolute
+	/ IRI-path-rootless
+	/ IRI-path-empty
+
+; Line 290:
+IRI-authority =
+	[IRI-userinfo %x40]
+	IRI-host
+	[%x3A URI-port]
+
+; Line 297:
+IRI-userinfo =
+	*(
+		IRI-unreserved
+		/ URI-pct-encoded
+		/ URI-sub-delims
+		/ %x3A
+	)
+
+; Line 307:
+IRI-host =
+	URI-IP-literal
+	/ URI-IPv4address
+	/ IRI-reg-name
+
+; Line 314:
+IRI-reg-name =
+	*(
+		IRI-unreserved
+		/ URI-pct-encoded
+		/ URI-sub-delims
+	)
+
+; Line 323:
+IRI-path-abempty = *(%x2F IRI-segment)
+
+; Line 327:
+IRI-path-absolute =
+	%x2F [
+		IRI-segment-nz
+		*(%x2F IRI-segment)
+	]
+
+; Line 335:
+IRI-path-rootless = IRI-segment-nz *(%x2F IRI-segment)
+
+; Line 339:
+IRI-path-empty = 0IRI-pchar
+
+; Line 343:
+IRI-segment = *IRI-pchar
+
+; Line 347:
+IRI-segment-nz = 1*IRI-pchar
+
+; Line 351:
+IRI-pchar =
+	IRI-unreserved
+	/ URI-pct-encoded
+	/ URI-sub-delims
+	/ %x3A-40
+
+; Line 359:
+IRI-query = *(IRI-pchar / Privateuse / %x2F / %x3F)
+
+; Line 363:
+IRI-fragment = *(IRI-pchar / %x2F / %x3F)
+
+; Line 367:
+IRI-unreserved =
+	Alpha / Decimal / %x2D-2E / %x5F / %x7E
+	/ UCSChar
+
+; Line 373:
+URI-scheme = Alpha *(Alpha / Decimal / %x2B %x2D %x2E)
+
+; Line 377:
+URI-port = *Decimal
+
+; Line 381:
+URI-IP-literal =
+	%x5B (
+		URI-IPv6address
+		/ URI-IPvFuture
+	) %x5D
+
+; Line 389:
+URI-IPvFuture =
+	(%x56 / %x76) 1*Hex %x2E
+	1*(URI-unreserved / URI-sub-delims / %x5B)
+
+; Line 395:
+URI-IPv6address =
+	6(URI-h16 %x3A) URI-ls32
+	/ %x3A.3A
+		5(URI-h16 %x3A) URI-ls32
+	/ [URI-h16] %x3A.3A
+		4(URI-h16 %x3A) URI-ls32
+	/ [*1(URI-h16 %x3A) URI-h16] %x3A.3A
+		3(URI-h16 %x3A) URI-ls32
+	/ [*2(URI-h16 %x3A) URI-h16] %x3A.3A
+		2(URI-h16 %x3A) URI-ls32
+	/ [*3(URI-h16 %x3A) URI-h16] %x3A.3A
+		URI-h16 %x3A URI-ls32
+	/ [*4(URI-h16 %x3A) URI-h16] %x3A.3A
+		URI-ls32
+	/ [*5(URI-h16 %x3A) URI-h16] %x3A.3A
+		URI-h16
+	/ [*6(URI-h16 %x3A) URI-h16] %x3A.3A
+
+; Line 415:
+URI-h16 = 1*4Hex
+	; 16 bits of address represented in hexadecimal
+
+; Line 420:
+URI-ls32 = (URI-h16 %x3A URI-h16) / IPv4address
+	; Least significant 32 bits of address
+
+; Line 425:
+URI-IPv4address =
+	URI-dec-octet
+	%x2E URI-dec-octet
+	%x2E URI-dec-octet
+	%x2E URI-dec-octet
+
+; Line 433:
+URI-dec-octet =
+	Decimal
+		; 0--9
+	/ NonZero Decimal
+		; 10--99
+	/ One 2Decimal
+		; 100--199
+	/ %x32 %x30-34 Decimal
+		; 200--249
+	/ %x32 %x35 %x30-35
+		; 250--255
+
+; Line 447:
+URI-pct-encoded = %x25 Hex Hex
+
+; Line 451:
+URI-unreserved = Alpha / Decimal / %x2D-2E / %x5F / %x7E
+
+; Line 455:
+URI-sub-delims = %x21 / %x24 / %x26-2C / %x3B / %x3D
+
+; Line 462:
+NonEmptyString = NoSpace *([Space] NoSpace)
+
+; Line 466:
+String = [NonEmptyString]
+	; May be empty
+
+; Line 471:
+CommentString = [NoSpace [*NoBreak NoSpace]]
+	; May be empty
+
+; Line 486:
+NameSpaceSequence =
+	Space (
+		UpperAlpha
+			; A letter
+		/ (%x2D (UpperAlpha / Decimal))
+			; A hyphen followed by a letter or digit
+	)
+		; Rules for including a space in a name
+
+; Line 497:
+NameHyphenSequence =
+	%x2D (
+		UpperAlpha
+			; A letter
+		/ Decimal
+			; A digit
+		/ NameSpaceSequence
+			; A space (and then some) as defined above
+	)
+		; Rules for including a hyphen
+
+; Line 510:
+Name =
+	UpperAlpha *(
+		UpperAlpha
+		/ Decimal
+		/ NameSpaceSequence
+		/ NameHyphenSequence
+	)
+		; Valid character, block, and script names
+
+; Line 530:
+UnicodeCodepoint =
+	%x55 %x2B *Zero
+	[One Zero / NonZeroHex]
+	*4UpperHex
+
+; Line 537:
+BinaryCodepoint =
+	*(Zero [Space])
+	Bit
+	*15([Space] Bit)
+
+; Line 544:
+Integer = 1*4UpperHex
+
+; Line 561:
+Comment =
+	*Space %x7C
+	*Space CommentString
+	*Space Break
+
+; Line 575:
+CharsetDeclaration =
+	%x43.48.41.52.53.45.54.40
+		; `CHARSET@`
+	IRI [
+		%x5E Integer
+		[%x2E Integer]
+	] Break
+
+; Line 600:
+BlockDeclaration =
+	*Space %x25
+	*Space Name
+	*Space Break
+
+; Line 620:
+ScriptDeclaration =
+	*Space %x40
+	*Space IRI
+	*Space Break
+
+; Line 646:
+CharacterDefinition =
+	UnicodeMapping
+	CharacterInfo
+	CompatibilityMapping
+	DecompositionMapping
+	[AdditionalProperties]
+	[Aliases]
+	[OtherNames]
+	[Notes]
+	[References]
+	[Glyphs]
+
+; Line 674:
+UnicodeMapping =
+	1*(
+		*Space UnicodeCodepoint
+		[1*Space CommentString]
+		*Space Break
+	)
+
+; Line 723:
+BasicType =
+	%x43.4F.4E.54.52.4F.4C
+		; `CONTROL`
+	/ %x54.52.41.4E.53.4D.49.53.53.49.4F.4E
+		; `TRANSMISSION`
+	/ %x46.4F.52.4D.41.54
+		; `FORMAT`
+	/ %x44.41.54.41
+		; `DATA`
+	/ %x4E.4F.4E.53.50.41.43.49.4E.47
+		; `NONSPACING`
+	/ %x53.50.41.43.49.4E.47
+		; `SPACING`
+	/ %x50.52.49.56.41.54.45.55.53.45
+		; `PRIVATEUSE`
+	/ %x4E.4F.4E.43.48.41.52.41.43.54.45.52
+		; `NONCHARACTER`
+	; It is not possible to define an `UNASSIGNED` character
+
+; Line 744:
+CharacterInfo =
+	*Space %x3A
+	*Space (Codepoint / BinaryCodepoint *Space %x7C)
+	*Space Name
+	*Space %x5B BasicType %x5D
+	*Space Break
+
+; Line 778:
+CompatibilityMapping =
+	[
+		*Space %x7E
+		*Space [%x5B IRI %x5D]
+		1*(*Space Codepoint)
+		*Space Break
+	]
+
+; Line 837:
+DecompositionMapping =
+	[
+		(
+			*Space %x3C
+			1*(*Space Codepoint)
+			*Space Break
+		) / (
+			*Space %x3C.3C
+			2*(*Space Codepoint)
+			*Space Break
+		)
+	]
+
+; Line 903:
+Deprecated = %x44.45.50.52.45.43.41.54.45.44
+	; `DEPRECATED`
+
+; Line 908:
+CharacterWidth =
+	%x50.52.4F.50.4F.52.54.49.4F.4E.41.4C
+		; `PROPORTIONAL`
+	/ %x46.55.4C.4C.57.49.44.54.48
+		; `FULLWIDTH`
+
+; Line 916:
+SegmentationClass =
+	%x45.58.54.45.4E.44.53
+		; `EXTENDS`
+	/ %x44.49.56.49.44.45.53
+		; `DIVIDER`
+
+; Line 924:
+ConjoiningMode =
+	%x43.4F.4E.4A.4F.49.4E.53.40
+		; `CONJOINS@`
+	IRI
+
+; Line 931:
+Conjoins = ConjoiningMode [%x7C Integer]
+
+; Line 935:
+Combines = SegmentationClass [%x40 Integer]
+
+; Line 939:
+AdditionalProperties =
+	*Space %x21
+	(
+		*Space Deprecated
+		[
+			*Space CharacterWidth [*Space ConjoiningMode]
+			/ *Space Conjoins
+			/ *Space Combines
+		]
+		/ *Space CharacterWidth [*Space ConjoiningMode]
+		/ *Space Conjoins
+		/ *Space Combines
+	)
+	*Space Break
+
+; Line 978:
+Alias =
+	*Space %x3D
+	*Space Name
+	*Space Break
+
+; Line 985:
+Aliases = 1*Alias
+
+; Line 998:
+OtherName =
+	*Space %x2D
+	*Space NonEmptyString
+	*Space Break
+
+; Line 1005:
+OtherNames = 1*OtherName
+
+; Line 1018:
+Note =
+	*Space %x2A
+	*Space NonEmptyString
+	*Space Break
+
+; Line 1025:
+Notes = 1*Note
+
+; Line 1038:
+Reference =
+	*Space %x3E
+	*Space Codepoint
+	[1*Space CommentString]
+	*Space Break
+
+; Line 1046:
+References = 1*Reference
+
+; Line 1070:
+Glyph =
+	*Space %x23
+	*Space Bit
+	31*([Space / *Space Break *Space] Bit)
+	*Space Break
+
+; Line 1078:
+Glyphs = 1*Glyph
