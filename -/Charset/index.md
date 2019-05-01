@@ -650,7 +650,7 @@ CharacterDefinition =
 	CharacterInfo
 	CompatibilityMapping
 	DecompositionMapping
-	[AdditionalProperties]
+	AdditionalProperties
 	[Aliases]
 	[OtherNames]
 	[Notes]
@@ -660,7 +660,7 @@ CharacterDefinition =
 {: id="prod.CharacterDefinition"}
 
 A [`<CharacterDefinition>`] defines a single `kixt:Character`.
-The [`<UnicodeMapping>`] and [`<CharacterInfo>`] productions are required; the [`<CompatibilityMapping>`] and [`<DecompositionMapping>`] productions are required but may be empty; all other productions are optional but must be specified in the order above.
+The [`<UnicodeMapping>`] and [`<CharacterInfo>`] productions are required; the [`<CompatibilityMapping>`], [`<DecompositionMapping>`], and [`<AdditionalProperties>`] productions are required but may be empty; all other productions are optional but must be specified in the order above.
 
 Upon reaching a [`<CharacterDefinition>`], set <var>current character</var> to a new [blank node].
 Create a new [RDF triple] with <var>current charset</var> as its subject, `kixt:character` as its predicate, and <var>current character</var> as its object.
@@ -939,24 +939,29 @@ Combines = SegmentationClass [%x40 Integer]
 {: id="prod.Combines"}
 ```abnf
 AdditionalProperties =
-	*Space %x21
-	(
-		*Space Deprecated
-		[
-			*Space CharacterWidth [*Space ConjoiningMode]
+	[
+		*Space %x21
+		(
+			*Space Deprecated [
+				*Space CharacterWidth [
+					*Space ConjoiningMode
+				]
+				/ *Space Conjoins
+				/ *Space Combines
+			]
+			/ *Space CharacterWidth [
+				*Space ConjoiningMode
+			]
 			/ *Space Conjoins
 			/ *Space Combines
-		]
-		/ *Space CharacterWidth [*Space ConjoiningMode]
-		/ *Space Conjoins
-		/ *Space Combines
-	)
-	*Space Break
+		)
+		*Space Break
+	]
 ```
 {: id="prod.AdditionalProperties"}
 
 An [`<AdditionalProperties>`] defines a number of additional properties on a `kixt:Character`; in order, these are: whether the character is deprecated, whether the character is fullwidth or proportional, whether the character conjoins with previous characters of a similar type, and whether the character is a combining character.
-All of these elements are optional, but at least one must be present.
+All of these elements are optional, but at least one must be present if the production is nonempty as a whole.
 [`<AdditionalProperties>`] begins with an `U+0021 EXCLAMATION MARK`.
 
 Upon reaching an [`<AdditionalProperties>`]:

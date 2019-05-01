@@ -352,7 +352,7 @@ CharacterDefinition =
 	CharacterInfo
 	CompatibilityMapping
 	DecompositionMapping
-	[AdditionalProperties]
+	AdditionalProperties
 	[Aliases]
 	[OtherNames]
 	[Notes]
@@ -450,63 +450,68 @@ Combines = SegmentationClass [%x40 Integer]
 
 ; Line 939:
 AdditionalProperties =
-	*Space %x21
-	(
-		*Space Deprecated
-		[
-			*Space CharacterWidth [*Space ConjoiningMode]
+	[
+		*Space %x21
+		(
+			*Space Deprecated [
+				*Space CharacterWidth [
+					*Space ConjoiningMode
+				]
+				/ *Space Conjoins
+				/ *Space Combines
+			]
+			/ *Space CharacterWidth [
+				*Space ConjoiningMode
+			]
 			/ *Space Conjoins
 			/ *Space Combines
-		]
-		/ *Space CharacterWidth [*Space ConjoiningMode]
-		/ *Space Conjoins
-		/ *Space Combines
-	)
-	*Space Break
+		)
+		*Space Break
+	]
 
-; Line 978:
+; Line 983:
 Alias =
 	*Space %x3D
 	*Space Name
 	*Space Break
 
-; Line 985:
+; Line 990:
 Aliases = 1*Alias
 
-; Line 998:
+; Line 1003:
 OtherName =
 	*Space %x2D
 	*Space NonEmptyString
 	*Space Break
 
-; Line 1005:
+; Line 1010:
 OtherNames = 1*OtherName
 
-; Line 1018:
+; Line 1023:
 Note =
 	*Space %x2A
 	*Space NonEmptyString
 	*Space Break
 
-; Line 1025:
+; Line 1030:
 Notes = 1*Note
 
-; Line 1038:
+; Line 1043:
 Reference =
 	*Space %x3E
 	*Space Codepoint
 	[1*Space CommentString]
 	*Space Break
 
-; Line 1046:
+; Line 1051:
 References = 1*Reference
 
-; Line 1070:
+; Line 1075:
 Glyph =
 	*Space %x23
 	*Space Bit
 	31*([Space / *Space Break *Space] Bit)
 	*Space Break
 
-; Line 1078:
+; Line 1083:
 Glyphs = 1*Glyph
