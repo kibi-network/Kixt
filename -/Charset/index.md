@@ -546,7 +546,7 @@ UnicodeCodepoint =
 ```abnf
 BinaryCodepoint =
 	*(Zero [Space]) One *15([Space] Bit)
-	/ 1*(Zero [Space])
+	/ Zero *([Space] Zero)
 ```
 {: id="prod.BinaryCodepoint"}
 ```abnf
@@ -756,7 +756,7 @@ BasicType =
 ```abnf
 CharacterInfo =
 	*Space %x3A
-	*Space (Codepoint / BinaryCodepoint *Space %x7C)
+	*Space (BinaryCodepoint *Space %x7C / Codepoint Space)
 	*Space Name
 	*Space %x5B BasicType %x5D
 	*Space Break
@@ -1130,15 +1130,21 @@ In addition to the constraints made by the [ABNF] syntax, the following situatio
 
 04. A [`<UnicodeMapping>`] in a [`<CharacterDefinition>`] which has a [`<BasicType>`] other than `SPACING` or `NONSPACING` but which has some [`<UnicodeCodepoint>`] whose value is not either `U+FFFC`, `U+FFFD`, or a [Unicode] character with a [`General_Category`] of `Zs`, `Zl`, `Zp`,`Cc`, `Cf`, `Cs`, `Co`, or `Cn`.
 
-05. Assigning the same value as the object of a `kixt:name` or `kixt:alias` predicate for two different subjects (`kixt:name` and `kixt:alias` must be unique within a shared namespace).
+05. Assigning an object other than `https://vocab.KIBI.network/Kixt/#GENERIC` for the `kixt:compatibilityMode` predicate for a subject whose `kixt:compatibility` predicate has an object with one `kixt:slot` predicate whose object has one `kixt:item` predicate whose object is the subject itself.
 
-06. Assigning `kixt:INHERITED` as the object of a `kixt:script` predicate while processing a [`<CharacterDefinition>`] which does not contain a [`<Combines>`].
+    <div role="note" markdown="block">
+    In other words, if a [character] has a compatibility decomposition of itself, then it must have the default compatibility mode of `kixt:GENERIC`.
+    </div>
 
-07. Assigning the same object for a `kixt:codepoint` predicate while processing two different [`<CharacterInfo>`]s.
+06. Assigning the same value as the object of a `kixt:name` or `kixt:alias` predicate for two different subjects (`kixt:name` and `kixt:alias` must be unique within a shared namespace).
 
-08. Assigning the multiple objects with the same length for a `kixt:representativeGlyph` predicate for a single subject.
+07. Assigning `kixt:INHERITED` as the object of a `kixt:script` predicate while processing a [`<CharacterDefinition>`] which does not contain a [`<Combines>`].
 
-09. Finishing processing the [Kixt Charset Definition] when not every `kixt:character` predicate with a subject of <var>current charset</var> has an object for which a `kixt:basicType` predicate has been assigned.
+08. Assigning the same object for a `kixt:codepoint` predicate while processing two different [`<CharacterInfo>`]s.
+
+09. Assigning the multiple objects with the same length for a `kixt:representativeGlyph` predicate for a single subject.
+
+10. Finishing processing the [Kixt Charset Definition] when not every `kixt:character` predicate with a subject of <var>current charset</var> has an object for which a `kixt:basicType` predicate has been assigned.
 
     <div role="note" markdown="block">
     Another way of expressing this constraint is that every [`<Codepoint>`] in a [`<CompatibilityMapping>`], [`<DecompositionMapping>`], or [`<Reference>`] must identify a `kixt:Character` defined in the same document.

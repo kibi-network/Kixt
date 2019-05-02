@@ -1,5 +1,5 @@
 /*
-This script generates the ABNF files in `/Tools/ABNF/` from the specifications in `/Spec/`.
+This script generates an ABNF file from the `abnf` code blocks in a markdown source.
 To run: call `node makeABNF $Input $Output`.
 */
 
