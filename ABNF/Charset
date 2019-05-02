@@ -403,70 +403,73 @@ CompatibilityMapping =
 	[
 		*Space %x7E
 		*Space [%x5B IRI %x5D]
-		1*(*Space Codepoint)
+		*Space Codepoint
+		*(1*Space Codepoint)
 		*Space Break
 	]
 
-; Line 848:
+; Line 849:
 DecompositionMapping =
 	[
 		(
 			*Space %x3C
-			1*(*Space Codepoint)
+			*Space Codepoint
+			*(1*Space Codepoint)
 			*Space Break
 		) / (
 			*Space %x3C.3C
-			2*(*Space Codepoint)
+			*Space Codepoint
+			1*(1*Space Codepoint)
 			*Space Break
 		)
 	]
 
-; Line 914:
+; Line 917:
 Deprecated = %x44.45.50.52.45.43.41.54.45.44
 	; `DEPRECATED`
 
-; Line 919:
+; Line 922:
 CharacterWidth =
 	%x50.52.4F.50.4F.52.54.49.4F.4E.41.4C
 		; `PROPORTIONAL`
 	/ %x46.55.4C.4C.57.49.44.54.48
 		; `FULLWIDTH`
 
-; Line 927:
+; Line 930:
 SegmentationClass =
 	%x45.58.54.45.4E.44.53
 		; `EXTENDS`
 	/ %x44.49.56.49.44.45.53
 		; `DIVIDER`
 
-; Line 935:
+; Line 938:
 ConjoiningMode =
 	%x43.4F.4E.4A.4F.49.4E.53.40
 		; `CONJOINS@`
 	IRI
 
-; Line 942:
+; Line 945:
 Conjoins = ConjoiningMode [%x7C Integer]
 
-; Line 946:
+; Line 949:
 Combines = SegmentationClass [%x40 Integer]
 
-; Line 950:
+; Line 953:
 AdditionalProperties =
 	[
 		*Space %x21
 		*Space (
 			Deprecated [
-				*Space (
+				1*Space (
 					CharacterWidth [
-						*Space ConjoiningMode
+						1*Space ConjoiningMode
 					]
 					/ Conjoins
 					/ Combines
 				)
 			]
 			/ CharacterWidth [
-				*Space ConjoiningMode
+				1*Space ConjoiningMode
 			]
 			/ Conjoins
 			/ Combines
@@ -474,49 +477,49 @@ AdditionalProperties =
 		*Space Break
 	]
 
-; Line 996:
+; Line 999:
 Alias =
 	*Space %x3D
 	*Space Name
 	*Space Break
 
-; Line 1003:
+; Line 1006:
 Aliases = 1*Alias
 
-; Line 1016:
+; Line 1019:
 OtherName =
 	*Space %x2D
 	*Space NonEmptyString
 	*Space Break
 
-; Line 1023:
+; Line 1026:
 OtherNames = 1*OtherName
 
-; Line 1036:
+; Line 1039:
 Note =
 	*Space %x2A
 	*Space NonEmptyString
 	*Space Break
 
-; Line 1043:
+; Line 1046:
 Notes = 1*Note
 
-; Line 1056:
+; Line 1059:
 Reference =
 	*Space %x3E
 	*Space Codepoint
 	[1*Space CommentString]
 	*Space Break
 
-; Line 1064:
+; Line 1067:
 References = 1*Reference
 
-; Line 1088:
+; Line 1091:
 Glyph =
 	*Space %x23
 	*Space Bit
 	31*([*Space Break *Space / Space] Bit)
 	*Space Break
 
-; Line 1096:
+; Line 1099:
 Glyphs = 1*Glyph
