@@ -201,6 +201,7 @@
 [`<Notes>`]: <{{ "/-/Charset/#prod.Notes" | absolute_url }}>
 [`<Reference>`]: <{{ "/-/Charset/#prod.Reference" | absolute_url }}>
 [`<References>`]: <{{ "/-/Charset/#prod.References" | absolute_url }}>
+[`<HexGlyph>`]: <{{ "/-/Charset/#prod.HexGlyph" | absolute_url }}>
 [`<Glyph>`]: <{{ "/-/Charset/#prod.Glyph" | absolute_url }}>
 [`<Glyphs>`]: <{{ "/-/Charset/#prod.Glyphs" | absolute_url }}>
 

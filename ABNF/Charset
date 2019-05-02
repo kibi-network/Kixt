@@ -515,10 +515,13 @@ Reference =
 References = 1*Reference
 
 ; Line 1091:
+HexGlyph = 8*UpperHex
+
+; Line 1095:
 Glyph =
 	*Space %x23
-	*Space 8*UpperHex
+	*Space HexGlyph
 	*Space Break
 
-; Line 1098:
+; Line 1102:
 Glyphs = 1*Glyph
