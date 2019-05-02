@@ -317,7 +317,7 @@ UnicodeCodepoint =
 ; Line 545:
 BinaryCodepoint =
 	*(Zero [Space]) One *15([Space] Bit)
-	/ 1*(Zero [Space])
+	/ Zero *([Space] Zero)
 
 ; Line 551:
 Integer = 1*4UpperHex
@@ -393,7 +393,7 @@ BasicType =
 ; Line 755:
 CharacterInfo =
 	*Space %x3A
-	*Space (Codepoint / BinaryCodepoint *Space %x7C)
+	*Space (BinaryCodepoint *Space %x7C / Codepoint Space)
 	*Space Name
 	*Space %x5B BasicType %x5D
 	*Space Break
