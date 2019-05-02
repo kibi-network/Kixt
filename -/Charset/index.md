@@ -1092,8 +1092,7 @@ Upon reaching a [`<References>`], for each [`<Codepoint>`]:
 ```abnf
 Glyph =
 	*Space %x23
-	*Space Bit
-	31*([*Space Break *Space / Space] Bit)
+	*Space 8*UpperHex
 	*Space Break
 ```
 {: id="prod.Glyph"}
@@ -1103,9 +1102,10 @@ Glyphs = 1*Glyph
 {: id="prod.Glyphs"}
 
 A [`<Glyphs>`] provides a lofi black-and-white representative glyphs for a `kixt:Character`.
-It consists of one or [`<Glyph>`]s, each beginning with a `U+0023 NUMBER SIGN` and consisting of one or more lines of binary data in the form of [`<Zero>`]s and [`<One>`]s.
+It consists of one or [`<Glyph>`]s, each beginning with a `U+0023 NUMBER SIGN` and consisting of one or more lines of binary data represented in hexadecimal.
+Each bit of this data represents a pixel, with `0` indicating the background colour and `1` the foreground, beginning from the starting (in both horizontal and vertical directions, and travelling in the direction of the writing mode) corner of the glyph.
 
-Upon reaching a [`<Glyphs>`], for each [`<Glyph>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:representativeGlyph</code> as its predicate, and the [`xsd:hexBinary`] produced by converting each sequence of eight digits in the [`<Glyph>`] into their equivalent hexadecimal form, padding with additional terminal zeroes as necessary until either the total number of binary digits, or twice this number, is both divisible by eight and square.
+Upon reaching a [`<Glyphs>`], for each [`<Glyph>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:representativeGlyph</code> as its predicate, and the value of [`<Glyph>`] as its object, as a [`xsd:hexBinary`] padded with additional terminal zeroes as necessary until the total length is even, and the total length times either four or eight is square.
 
 <div role="note" markdown="block">
 This effectively limits representative glyphs to having a height divisible by 4.

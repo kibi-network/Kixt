@@ -517,9 +517,8 @@ References = 1*Reference
 ; Line 1091:
 Glyph =
 	*Space %x23
-	*Space Bit
-	31*([*Space Break *Space / Space] Bit)
+	*Space 8*UpperHex
 	*Space Break
 
-; Line 1099:
+; Line 1098:
 Glyphs = 1*Glyph
