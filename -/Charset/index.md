@@ -207,6 +207,10 @@ Specials, such as controls or noncharacters, are not allowed in a [Kixt Charset 
 (This does not prevent you from using their codepoints in the [`<UnicodeMapping>`] of [`<CharacterDefinition>`]s.)
 
 ```abnf
+NoHat = %x20-5D %x5F-7E / UCSChar / PrivateUse
+```
+{: id="prod.NoDot"}
+```abnf
 NoSpace = ASCIIChar / UCSChar / PrivateUse
 ```
 {: id="prod.NoSpace"}
@@ -571,15 +575,39 @@ Integer values are expressed as hexadecimal numbers from `0`–`FFFF`, with no l
 {: id="definition.comment"}
 
 ```abnf
-Comment =
+SingleLineComment =
 	*Space %x7C
 	*Space CommentString
 	*Space Break
 ```
+{: id="prod.SingleLineComment"}
+```abnf
+InnerCommentLine =
+	*2NoBreak Break
+	/ 3NoHat *NoBreak Break
+```
+{: id="prod.InnerCommentLine"}
+```abnf
+MultiLineComment =
+	%x5F.5F.5F Break
+	*InnerCommentLine
+	%x5E.5E.5E Break
+```
+{: id="prod.MultiLineComment"}
+```abnf
+Comment =
+	SingleLineComment
+	/ MultiLineComment
+```
 {: id="prod.Comment"}
 
-A comment is a single line beginning with `U+007C VERTICAL LINE` and then followed by any number of other characters.
+A single-line comment is a single line beginning with `U+007C VERTICAL LINE` and then followed by any number of other characters.
+Multi-line comments begin with three `U+005F LOW LINE` characters and end with three `U+005E CIRCUMFLEX ACCENT` characters.
 Comments should be ignored during processing.
+
+<div role="note" markdown="block">
+Note that multi-line comments can only appear on the "top level" and not inside of character declarations or other productions.
+</div>
 
 ### 3.4 Charset Declaration
 {: id="definition.charset"}
@@ -684,12 +712,15 @@ Create a new [RDF triple] with <var>current character</var> as its subject, `kix
 {: id="definition.character.unicode"}
 
 ```abnf
-UnicodeMapping =
-	1*(
-		*Space UnicodeCodepoint
-		[1*Space CommentString]
-		*Space Break
-	)
+Unicode =
+	*Space UnicodeCodepoint
+	[1*Space CommentString]
+	*Space Break
+	*SingleLineComment
+```
+{: id="prod.Unicode"}
+```abnf
+UnicodeMapping = 1*Unicode
 ```
 {: id="prod.UnicodeMapping"}
 
@@ -760,6 +791,7 @@ CharacterInfo =
 	*Space Name
 	*Space %x5B BasicType %x5D
 	*Space Break
+	*SingleLineComment
 ```
 {: id="prod.CharacterInfo"}
 
@@ -795,6 +827,7 @@ CompatibilityMapping =
 		*Space Codepoint
 		*(1*Space Codepoint)
 		*Space Break
+		*SingleLineComment
 	]
 ```
 {: id="prod.CompatibilityMapping"}
@@ -861,6 +894,7 @@ DecompositionMapping =
 			1*(1*Space Codepoint)
 			*Space Break
 		)
+		*SingleLineComment
 	]
 ```
 {: id="prod.DecompositionMapping"}
@@ -972,6 +1006,7 @@ AdditionalProperties =
 			/ Combines
 		)
 		*Space Break
+		*SingleLineComment
 	]
 ```
 {: id="prod.AdditionalProperties"}
@@ -1002,6 +1037,7 @@ Alias =
 	*Space %x3D
 	*Space Name
 	*Space Break
+	*SingleLineComment
 ```
 {: id="prod.Alias"}
 ```abnf
@@ -1022,6 +1058,7 @@ OtherName =
 	*Space %x2D
 	*Space NonEmptyString
 	*Space Break
+	*SingleLineComment
 ```
 {: id="prod.OtherName"}
 ```abnf
@@ -1042,6 +1079,7 @@ Note =
 	*Space %x2A
 	*Space NonEmptyString
 	*Space Break
+	*SingleLineComment
 ```
 {: id="prod.Note"}
 ```abnf
@@ -1063,6 +1101,7 @@ Reference =
 	*Space Codepoint
 	[1*Space CommentString]
 	*Space Break
+	*SingleLineComment
 ```
 {: id="prod.Reference"}
 ```abnf
@@ -1098,6 +1137,7 @@ Glyph =
 	*Space %x23
 	*Space HexGlyph
 	*Space Break
+	*SingleLineComment
 ```
 {: id="prod.Glyph"}
 ```abnf
@@ -1127,7 +1167,7 @@ In addition to the constraints made by the [ABNF] syntax, the following situatio
 
 01. Two or more [`<BlockDeclaration>`]s with identical [`<Name>`]s.
 
-02. A [`<Combines>`], [`<Conjoining>`], or [`<CharacterWidth>`] in a [`<CharacterDefinition>`] which does not have a [`<BasicType>`] of `SPACING` or `NONSPACING`.
+02. A [`<Combines>`], [`<Conjoins>`], or [`<CharacterWidth>`] in a [`<CharacterDefinition>`] which does not have a [`<BasicType>`] of `SPACING` or `NONSPACING`.
 
 03. Assigning an object other than `https://vocab.KIBI.network/Kixt/#GENERIC` for the `kixt:compatibilityMode` predicate for a subject whose `kixt:compatibility` predicate has an object with one `kixt:slot` predicate whose object has one `kixt:item` predicate whose object is the subject itself.
 
@@ -1176,6 +1216,9 @@ A [Kixt Charset Definition] is <dfn id="dfn.null_compatible">null compatible</df
 ```kch
 CHARSET@https://charset.KIBI.network/Kixt/Null^1.0
 
+% ASCII CONTROLS AND BASIC LATIN
+@ https://vocab.KIBI.network/Kixt/#COMMON
+
 U+0000
 : 00 NULL [FORMAT]
 = NUL
@@ -1217,6 +1260,12 @@ All [XML compatible]{::} [charsets][charset] are [null compatible].
 </div>
 
 ## 5. Changelog {#changelog}
+
+{: id="changelog.2019-05-02"} <time>2019-05-02</time>
+
+: Added [`<MultiLineComment>`]s.
+
+: Allowed [`<SingleLineComment>`]s to appear inside of [`<CharacterDefinition>`]s.
 
 {: id="changelog.2019-05-01"} <time>2019-05-01</time>
 

@@ -66,65 +66,68 @@ PrivateUse = %xE000-F8FF / %xF0000-FFFFD / %x100000-10FFFD
 	; Unicode private-use characters
 
 ; Line 208:
-NoSpace = ASCIIChar / UCSChar / PrivateUse
+NoHat = %x20-5D %x5F-7E / UCSChar / PrivateUse
 
 ; Line 212:
-NoBreak = NoSpace / Space
+NoSpace = ASCIIChar / UCSChar / PrivateUse
 
 ; Line 216:
+NoBreak = NoSpace / Space
+
+; Line 220:
 AnyChar = NoBreak / Break
 
-; Line 223:
+; Line 227:
 Zero = %x30
 
-; Line 227:
+; Line 231:
 One = %x31
 
-; Line 231:
+; Line 235:
 Bit = Zero / One
 
-; Line 235:
+; Line 239:
 NonZero = %x31-39
 
-; Line 239:
+; Line 243:
 Decimal = %x30-39
 
-; Line 246:
+; Line 250:
 NonZeroHex = %x31-39 / %x41-46
 
-; Line 250:
+; Line 254:
 UpperHex = %x30-39 / %x41-46
 
-; Line 254:
+; Line 258:
 Hex = %x30-39 / %x41-46 / %x61-66
 	; Case-insensitive hexadecimal used by IRI syntax
 
-; Line 263:
+; Line 267:
 UpperAlpha = %x41-5A
 
-; Line 267:
+; Line 271:
 Alpha = %x41-5A / %x61-7A
 
-; Line 275:
+; Line 279:
 IRI =
 	URI-scheme %x3A IRI-hier-part
 	[%x3F IRI-query]
 	[%x23 IRI-fragment]
 
-; Line 282:
+; Line 286:
 IRI-hier-part =
 	%x2F.2F IRI-authority IRI-path-abempty
 	/ IRI-path-absolute
 	/ IRI-path-rootless
 	/ IRI-path-empty
 
-; Line 290:
+; Line 294:
 IRI-authority =
 	[IRI-userinfo %x40]
 	IRI-host
 	[%x3A URI-port]
 
-; Line 297:
+; Line 301:
 IRI-userinfo =
 	*(
 		IRI-unreserved
@@ -133,13 +136,13 @@ IRI-userinfo =
 		/ %x3A
 	)
 
-; Line 307:
+; Line 311:
 IRI-host =
 	URI-IP-literal
 	/ URI-IPv4address
 	/ IRI-reg-name
 
-; Line 314:
+; Line 318:
 IRI-reg-name =
 	*(
 		IRI-unreserved
@@ -147,65 +150,65 @@ IRI-reg-name =
 		/ URI-sub-delims
 	)
 
-; Line 323:
+; Line 327:
 IRI-path-abempty = *(%x2F IRI-segment)
 
-; Line 327:
+; Line 331:
 IRI-path-absolute =
 	%x2F [
 		IRI-segment-nz
 		*(%x2F IRI-segment)
 	]
 
-; Line 335:
+; Line 339:
 IRI-path-rootless = IRI-segment-nz *(%x2F IRI-segment)
 
-; Line 339:
+; Line 343:
 IRI-path-empty = 0IRI-pchar
 
-; Line 343:
+; Line 347:
 IRI-segment = *IRI-pchar
 
-; Line 347:
+; Line 351:
 IRI-segment-nz = 1*IRI-pchar
 
-; Line 351:
+; Line 355:
 IRI-pchar =
 	IRI-unreserved
 	/ URI-pct-encoded
 	/ URI-sub-delims
 	/ %x3A-40
 
-; Line 359:
+; Line 363:
 IRI-query = *(IRI-pchar / Privateuse / %x2F / %x3F)
 
-; Line 363:
+; Line 367:
 IRI-fragment = *(IRI-pchar / %x2F / %x3F)
 
-; Line 367:
+; Line 371:
 IRI-unreserved =
 	Alpha / Decimal / %x2D-2E / %x5F / %x7E
 	/ UCSChar
 
-; Line 373:
+; Line 377:
 URI-scheme = Alpha *(Alpha / Decimal / %x2B / %x2D-2E)
 
-; Line 377:
+; Line 381:
 URI-port = *Decimal
 
-; Line 381:
+; Line 385:
 URI-IP-literal =
 	%x5B (
 		URI-IPv6address
 		/ URI-IPvFuture
 	) %x5D
 
-; Line 389:
+; Line 393:
 URI-IPvFuture =
 	(%x56 / %x76) 1*Hex %x2E
 	1*(URI-unreserved / URI-sub-delims / %x5B)
 
-; Line 395:
+; Line 399:
 URI-IPv6address =
 	6(URI-h16 %x3A) URI-ls32
 	/ %x3A.3A
@@ -224,22 +227,22 @@ URI-IPv6address =
 		URI-h16
 	/ [*6(URI-h16 %x3A) URI-h16] %x3A.3A
 
-; Line 415:
+; Line 419:
 URI-h16 = 1*4Hex
 	; 16 bits of address represented in hexadecimal
 
-; Line 420:
+; Line 424:
 URI-ls32 = (URI-h16 %x3A URI-h16) / IPv4address
 	; Least significant 32 bits of address
 
-; Line 425:
+; Line 429:
 URI-IPv4address =
 	URI-dec-octet
 	%x2E URI-dec-octet
 	%x2E URI-dec-octet
 	%x2E URI-dec-octet
 
-; Line 433:
+; Line 437:
 URI-dec-octet =
 	%x32 %x35 %x30-35
 		; 250--255
@@ -252,27 +255,27 @@ URI-dec-octet =
 	/ Decimal
 		; 0--9
 
-; Line 447:
+; Line 451:
 URI-pct-encoded = %x25 Hex Hex
 
-; Line 451:
+; Line 455:
 URI-unreserved = Alpha / Decimal / %x2D-2E / %x5F / %x7E
 
-; Line 455:
+; Line 459:
 URI-sub-delims = %x21 / %x24 / %x26-2C / %x3B / %x3D
 
-; Line 462:
+; Line 466:
 NonEmptyString = NoSpace *([Space] NoSpace)
 
-; Line 466:
+; Line 470:
 String = [NonEmptyString]
 	; May be empty
 
-; Line 471:
+; Line 475:
 CommentString = [NoSpace [*NoBreak NoSpace]]
 	; May be empty
 
-; Line 486:
+; Line 490:
 NameSpaceSequence =
 	Space (
 		UpperAlpha
@@ -282,7 +285,7 @@ NameSpaceSequence =
 	)
 		; Rules for including a space in a name
 
-; Line 497:
+; Line 501:
 NameHyphenSequence =
 	%x2D (
 		UpperAlpha
@@ -294,7 +297,7 @@ NameHyphenSequence =
 	)
 		; Rules for including a hyphen
 
-; Line 510:
+; Line 514:
 Name =
 	UpperAlpha *(
 		UpperAlpha
@@ -304,7 +307,7 @@ Name =
 	)
 		; Valid character, block, and script names
 
-; Line 534:
+; Line 538:
 UnicodeCodepoint =
 	%x55 %x2B
 	(
@@ -314,21 +317,37 @@ UnicodeCodepoint =
 			; Zero
 	)
 
-; Line 545:
+; Line 549:
 BinaryCodepoint =
 	*(Zero [Space]) One *15([Space] Bit)
 	/ Zero *([Space] Zero)
 
-; Line 551:
+; Line 555:
 Integer = 1*4UpperHex
 
-; Line 572:
-Comment =
+; Line 576:
+SingleLineComment =
 	*Space %x7C
 	*Space CommentString
 	*Space Break
 
-; Line 586:
+; Line 583:
+InnerCommentLine =
+	*2NoBreak Break
+	/ 3NoHat *NoBreak Break
+
+; Line 589:
+MultiLineComment =
+	%x5F.5F.5F Break
+	*InnerCommentLine
+	%x5E.5E.5E Break
+
+; Line 596:
+Comment =
+	SingleLineComment
+	/ MultiLineComment
+
+; Line 614:
 CharsetDeclaration =
 	%x43.48.41.52.53.45.54.40
 		; `CHARSET@`
@@ -337,19 +356,19 @@ CharsetDeclaration =
 		[%x2E Integer]
 	] *Space Break
 
-; Line 611:
+; Line 639:
 BlockDeclaration =
 	*Space %x25
 	*Space Name
 	*Space Break
 
-; Line 631:
+; Line 659:
 ScriptDeclaration =
 	*Space %x40
 	*Space IRI
 	*Space Break
 
-; Line 657:
+; Line 685:
 CharacterDefinition =
 	UnicodeMapping
 	CharacterInfo
@@ -362,15 +381,17 @@ CharacterDefinition =
 	[References]
 	[Glyphs]
 
-; Line 685:
-UnicodeMapping =
-	1*(
-		*Space UnicodeCodepoint
-		[1*Space CommentString]
-		*Space Break
-	)
+; Line 713:
+Unicode =
+	*Space UnicodeCodepoint
+	[1*Space CommentString]
+	*Space Break
+	*SingleLineComment
 
-; Line 734:
+; Line 721:
+UnicodeMapping = 1*Unicode
+
+; Line 765:
 BasicType =
 	%x43.4F.4E.54.52.4F.4C
 		; `CONTROL`
@@ -390,15 +411,16 @@ BasicType =
 		; `NONCHARACTER`
 	; It is not possible to define an `UNASSIGNED` character
 
-; Line 755:
+; Line 786:
 CharacterInfo =
 	*Space %x3A
 	*Space (BinaryCodepoint *Space %x7C / Codepoint Space)
 	*Space Name
 	*Space %x5B BasicType %x5D
 	*Space Break
+	*SingleLineComment
 
-; Line 789:
+; Line 821:
 CompatibilityMapping =
 	[
 		*Space %x7E
@@ -406,9 +428,10 @@ CompatibilityMapping =
 		*Space Codepoint
 		*(1*Space Codepoint)
 		*Space Break
+		*SingleLineComment
 	]
 
-; Line 849:
+; Line 882:
 DecompositionMapping =
 	[
 		(
@@ -422,39 +445,40 @@ DecompositionMapping =
 			1*(1*Space Codepoint)
 			*Space Break
 		)
+		*SingleLineComment
 	]
 
-; Line 917:
+; Line 951:
 Deprecated = %x44.45.50.52.45.43.41.54.45.44
 	; `DEPRECATED`
 
-; Line 922:
+; Line 956:
 CharacterWidth =
 	%x50.52.4F.50.4F.52.54.49.4F.4E.41.4C
 		; `PROPORTIONAL`
 	/ %x46.55.4C.4C.57.49.44.54.48
 		; `FULLWIDTH`
 
-; Line 930:
+; Line 964:
 SegmentationClass =
 	%x45.58.54.45.4E.44.53
 		; `EXTENDS`
 	/ %x44.49.56.49.44.45.53
 		; `DIVIDER`
 
-; Line 938:
+; Line 972:
 ConjoiningMode =
 	%x43.4F.4E.4A.4F.49.4E.53.40
 		; `CONJOINS@`
 	IRI
 
-; Line 945:
+; Line 979:
 Conjoins = ConjoiningMode [%x7C Integer]
 
-; Line 949:
+; Line 983:
 Combines = SegmentationClass [%x40 Integer]
 
-; Line 953:
+; Line 987:
 AdditionalProperties =
 	[
 		*Space %x21
@@ -475,53 +499,59 @@ AdditionalProperties =
 			/ Combines
 		)
 		*Space Break
+		*SingleLineComment
 	]
 
-; Line 999:
+; Line 1034:
 Alias =
 	*Space %x3D
 	*Space Name
 	*Space Break
+	*SingleLineComment
 
-; Line 1006:
+; Line 1042:
 Aliases = 1*Alias
 
-; Line 1019:
+; Line 1055:
 OtherName =
 	*Space %x2D
 	*Space NonEmptyString
 	*Space Break
+	*SingleLineComment
 
-; Line 1026:
+; Line 1063:
 OtherNames = 1*OtherName
 
-; Line 1039:
+; Line 1076:
 Note =
 	*Space %x2A
 	*Space NonEmptyString
 	*Space Break
+	*SingleLineComment
 
-; Line 1046:
+; Line 1084:
 Notes = 1*Note
 
-; Line 1059:
+; Line 1097:
 Reference =
 	*Space %x3E
 	*Space Codepoint
 	[1*Space CommentString]
 	*Space Break
+	*SingleLineComment
 
-; Line 1067:
+; Line 1106:
 References = 1*Reference
 
-; Line 1091:
+; Line 1130:
 HexGlyph = 8*UpperHex
 
-; Line 1095:
+; Line 1134:
 Glyph =
 	*Space %x23
 	*Space HexGlyph
 	*Space Break
+	*SingleLineComment
 
-; Line 1102:
+; Line 1142:
 Glyphs = 1*Glyph

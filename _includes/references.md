@@ -124,6 +124,7 @@
 [`<ASCIIChar>`]: <{{ "/-/Charset/#prod.ASCIIChar" | absolute_url }}>
 [`<UCSChar>`]: <{{ "/-/Charset/#prod.UCSChar" | absolute_url }}>
 [`<PrivateUse>`]: <{{ "/-/Charset/#prod.PrivateUse" | absolute_url }}>
+[`<NoHat>`]: <{{ "/-/Charset/#prod.NoDot" | absolute_url }}>
 [`<NoSpace>`]: <{{ "/-/Charset/#prod.NoSpace" | absolute_url }}>
 [`<NoBreak>`]: <{{ "/-/Charset/#prod.NoBreak" | absolute_url }}>
 [`<AnyChar>`]: <{{ "/-/Charset/#prod.AnyChar" | absolute_url }}>
@@ -176,11 +177,15 @@
 [`<UnicodeCodepoint>`]: <{{ "/-/Charset/#prod.UnicodeCodepoint" | absolute_url }}>
 [`<BinaryCodepoint>`]: <{{ "/-/Charset/#prod.BinaryCodepoint" | absolute_url }}>
 [`<Integer>`]: <{{ "/-/Charset/#prod.Integer" | absolute_url }}>
+[`<SingleLineComment>`]: <{{ "/-/Charset/#prod.SingleLineComment" | absolute_url }}>
+[`<InnerCommentLine>`]: <{{ "/-/Charset/#prod.InnerCommentLine" | absolute_url }}>
+[`<MultiLineComment>`]: <{{ "/-/Charset/#prod.MultiLineComment" | absolute_url }}>
 [`<Comment>`]: <{{ "/-/Charset/#prod.Comment" | absolute_url }}>
 [`<CharsetDeclaration>`]: <{{ "/-/Charset/#prod.CharsetDeclaration" | absolute_url }}>
 [`<BlockDeclaration>`]: <{{ "/-/Charset/#prod.BlockDeclaration" | absolute_url }}>
 [`<ScriptDeclaration>`]: <{{ "/-/Charset/#prod.ScriptDeclaration" | absolute_url }}>
 [`<CharacterDefinition>`]: <{{ "/-/Charset/#prod.CharacterDefinition" | absolute_url }}>
+[`<Unicode>`]: <{{ "/-/Charset/#prod.Unicode" | absolute_url }}>
 [`<UnicodeMapping>`]: <{{ "/-/Charset/#prod.UnicodeMapping" | absolute_url }}>
 [`<BasicType>`]: <{{ "/-/Charset/#prod.BasicType" | absolute_url }}>
 [`<CharacterInfo>`]: <{{ "/-/Charset/#prod.CharacterInfo" | absolute_url }}>
