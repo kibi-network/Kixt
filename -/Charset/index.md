@@ -658,6 +658,7 @@ BlockDeclaration =
 	*Space Name
 	*Space Break
 ```
+{: id="prod.BlockDeclaration"}
 
 A [`<BlockDeclaration>`] defines a new `kixt:Block`.
 It begins with a `U+0025 PERCENT SIGN`, which is followed by the block name.

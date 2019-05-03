@@ -362,7 +362,7 @@ CharsetDeclaration =
 		[%x2E Integer]
 	] *Space Break
 
-; Line 659:
+; <#prod.BlockDeclaration>:
 BlockDeclaration =
 	*Space %x25
 	*Space Name
