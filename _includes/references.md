@@ -124,7 +124,7 @@
 [`<ASCIIChar>`]: <{{ "/-/Charset/#prod.ASCIIChar" | absolute_url }}>
 [`<UCSChar>`]: <{{ "/-/Charset/#prod.UCSChar" | absolute_url }}>
 [`<PrivateUse>`]: <{{ "/-/Charset/#prod.PrivateUse" | absolute_url }}>
-[`<NoHat>`]: <{{ "/-/Charset/#prod.NoDot" | absolute_url }}>
+[`<NoHat>`]: <{{ "/-/Charset/#prod.NoHat" | absolute_url }}>
 [`<NoSpace>`]: <{{ "/-/Charset/#prod.NoSpace" | absolute_url }}>
 [`<NoBreak>`]: <{{ "/-/Charset/#prod.NoBreak" | absolute_url }}>
 [`<AnyChar>`]: <{{ "/-/Charset/#prod.AnyChar" | absolute_url }}>
