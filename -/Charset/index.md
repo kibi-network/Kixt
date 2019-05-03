@@ -118,16 +118,25 @@ CharsetDefinition =
 ```
 {: id="prod.CharsetDefinition"}
 
-A <dfn id="dfn.Definition">Kixt Charset Definition</dfn> is a [UTF-8]–encoded file consisting of any number of block or script declarations, interspersed with any number of codepoint definitions, comments, or lines of whitespace.
+A <dfn id="dfn.Definition">Kixt Charset Definition</dfn> is a [UTF-8] or [UTF-16]–encoded file (determined by a leading BOM, and defaulting to UTF-8 if no BOM is present) consisting of any number of block or script declarations, interspersed with any number of codepoint definitions, comments, or lines of whitespace.
 This section describes the syntax of such documents, in [ABNF] and prose.
 It also describes how processors can use [Kixt Charset Definitions][Kixt Charset Definition] to generate [RDF graphs][RDF graph].
 
-### 3.1 End-of-Line Handling
+### 3.1 Null Handling
+
+Programs which process Kixt Charset Definitions must *ignore* any `U+0000 NULL` characters which appear in a document, behaving as though they were not present.
+
+<div role="note" markdown="block">
+This effectively allows a [UTF-16]–encoded document to be processed without a BOM if it only contains codepoints in the ASCII range.
+</div>
+
+### 3.2 End-of-Line Handling
 {: id="definition.eol"}
 
 ```abnf
 Break = %x2028
 	; A Unicode line separator
+	; This is effectively just a placeholder for whatever manner of linebreak a document happens to use; see spec description
 ```
 {: id="prod.break"}
 
@@ -140,7 +149,7 @@ However, to ease in the use of Kixt Charset Definitions on platforms for which s
 + the single character `U+0085 NEXT LINE`
 + any `U+000D CARRIAGE RETURN` character that is not immediately followed by `U+000A LINE FEED` or `U+0085 NEXT LINE`.
 
-### 3.2 Basic Syntaxes
+### 3.3 Basic Syntaxes
 {: id="definition.basic"}
 
 ```abnf
@@ -154,6 +163,12 @@ Blank = *Space Break
 `U+0020 SPACE` is the only space character in a [Kixt Charset Definition].
 Spaces and line separators are not interchangeable.
 
+```abnf
+ECMA6Char = %x21-22 / %x25-3F / %x41-5A / %x5F / %x61-7A
+	; The invariant printing characters from ECMA-6 (also ISO/IEC 646); documents written using only these characters (plus some manner of ASCII linebreak as described above) will be comprehensible in any ECMA-6 character set
+	; The core Kixt Character Definition syntax (with the exception of linebreaks) only uses characters from this set
+```
+{: id="prod.ECMA6Char"}
 ```abnf
 ASCIIChar = %x21-7E
 	; Non-control, non-space ASCII characters
@@ -207,9 +222,9 @@ Specials, such as controls or noncharacters, are not allowed in a [Kixt Charset 
 (This does not prevent you from using their codepoints in the [`<UnicodeMapping>`] of [`<CharacterDefinition>`]s.)
 
 ```abnf
-NoHat = %x20-5D %x5F-7E / UCSChar / PrivateUse
+NoSlash = %x20-2E %x30-7E / UCSChar / PrivateUse
 ```
-{: id="prod.NoHat"}
+{: id="prod.NoSlash"}
 ```abnf
 NoSpace = ASCIIChar / UCSChar / PrivateUse
 ```
@@ -571,12 +586,12 @@ Binary codepoints may have single spaces between their digits.
 
 Integer values are expressed as hexadecimal numbers from `0`–`FFFF`, with no leading zeros.
 
-### 3.3 Comment
+### 3.4 Comment
 {: id="definition.comment"}
 
 ```abnf
 SingleLineComment =
-	*Space %x7C
+	*Space %x2F
 	*Space CommentString
 	*Space Break
 ```
@@ -584,14 +599,14 @@ SingleLineComment =
 ```abnf
 InnerCommentLine =
 	*2NoBreak Break
-	/ 3NoHat *NoBreak Break
+	/ 3NoSlash *NoBreak Break
 ```
 {: id="prod.InnerCommentLine"}
 ```abnf
 MultiLineComment =
-	%x5F.5F.5F Break
+	%x2E.2E.2E Break
 	*InnerCommentLine
-	%x5E.5E.5E Break
+	%x2F.2F.2F Break
 ```
 {: id="prod.MultiLineComment"}
 ```abnf
@@ -601,23 +616,23 @@ Comment =
 ```
 {: id="prod.Comment"}
 
-A single-line comment is a single line beginning with `U+007C VERTICAL LINE` and then followed by any number of other characters.
-Multi-line comments begin with three `U+005F LOW LINE` characters and end with three `U+005E CIRCUMFLEX ACCENT` characters.
+A single-line comment is a single line beginning with `U+002F SOLIDUS` and then followed by any number of other characters.
+Multi-line comments begin with three `U+002E FULL STOP` characters and end with three `U+002F SOLIDUS` characters.
 Comments should be ignored during processing.
 
 <div role="note" markdown="block">
 Note that multi-line comments can only appear on the "top level" and not inside of character declarations or other productions.
 </div>
 
-### 3.4 Charset Declaration
+### 3.5 Charset Declaration
 {: id="definition.charset"}
 
 ```abnf
 CharsetDeclaration =
-	%x43.48.41.52.53.45.54.40
-		; `CHARSET@`
-	IRI [
-		%x5E Integer
+	%x3B.43.48.41.52.53.45.54.3C
+		; `;CHARSET<`
+	IRI %x3E [
+		Integer
 		[%x2E Integer]
 	] *Space Break
 ```
@@ -634,7 +649,7 @@ If a second [`<Integer>`] is present, create an RDF triple with the <var>current
 
 Finally, set <var>current script</var> to `kixt:UNKNOWN`; this is the default [script].
 
-### 3.5 Block Declaration
+### 3.6 Block Declaration
 {: id="definition.block"}
 
 ```abnf
@@ -654,19 +669,19 @@ Otherwise, set <var>in a block</var> to <i>true</i> and set <var>current block</
 
 If <var>in a block</var> is <i>true</i>, create a new [RDF triple] with <var>current block</var> as its subject, `kixt:name` as its predicate, and the value of [`<Name>`] as its object, as a [`xsd:string`].
 
-### 3.6 Script Declaration
+### 3.7 Script Declaration
 {: id="definition.script"}
 
 ```abnf
 ScriptDeclaration =
-	*Space %x40
-	*Space IRI
+	*Space %x27
+	*Space %x3C IRI %x3E
 	*Space Break
 ```
 {: id="prod.ScriptDeclaration"}
 
 A [`<ScriptDeclaration>`] defines a new `kixt:Script`.
-It begins with a `U+0040 COMMERCIAL AT`, which is followed by the script [`<IRI>`].
+It begins with a `U+0027 APOSTROPHE`, which is followed by the script [`<IRI>`].
 
 Three special scripts are defined in the [Kixt Ontology]:
 
@@ -680,7 +695,7 @@ The above values are given prefixed, but the actual value of [`<IRI>`] must be a
 
 Upon reaching a [`<ScriptDeclaration>`], set <var>current script</var> to [`<IRI>`].
 
-### 3.7 Character definition
+### 3.8 Character definition
 {: id="definition.character"}
 
 ```abnf
@@ -708,7 +723,7 @@ If <var>in a block</var> is <i>true</i>, create a new [RDF triple] with <var>cur
 
 Create a new [RDF triple] with <var>current character</var> as its subject, `kixt:script` as its predicate, and <var>current script</var> as its object.
 
-#### 3.7.1 Unicode Mapping
+#### 3.8.1 Unicode Mapping
 {: id="definition.character.unicode"}
 
 ```abnf
@@ -760,7 +775,7 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 ```
 </div>
 
-#### 3.7.2 Character Info
+#### 3.8.2 Character Info
 {: id="definition.character.info"}
 
 ```abnf
@@ -786,17 +801,17 @@ BasicType =
 {: id="prod.BasicType"}
 ```abnf
 CharacterInfo =
-	*Space %x3A
-	*Space (BinaryCodepoint *Space %x7C / Codepoint Space)
+	*Space %x3B
+	*Space (BinaryCodepoint *Space %x2F / Codepoint Space)
 	*Space Name
-	*Space %x5B BasicType %x5D
+	*Space %x28 BasicType %x29
 	*Space Break
 	*SingleLineComment
 ```
 {: id="prod.CharacterInfo"}
 
 A [`<CharacterInfo>`] defines the basic aspects of a `kixt:Character`.
-It begins with a `U+003A COLON`, followed by a codepoint in either hexadecimal or binary, followed by the name and basic type of the character.
+It begins with a `U+003B SEMICOLON`, followed by a codepoint in either hexadecimal or binary, followed by the name and basic type of the character.
 
 Upon reaching a [`<CharacterInfo>`], perform the following steps:
 
@@ -816,14 +831,14 @@ Upon reaching a [`<CharacterInfo>`], perform the following steps:
     Note that this is a [literal] with a [datatype IRI] of [`xsd:anyURI`], *not* an [RDF IRI][IRI].
     </div>
 
-#### 3.7.3 Compatibility Mapping
+#### 3.8.3 Compatibility Mapping
 {: id="definition.character.compatibility"}
 
 ```abnf
 CompatibilityMapping =
 	[
-		*Space %x7E
-		*Space [%x5B IRI %x5D]
+		*Space %x28
+		*Space [%x3C IRI %x3E]
 		*Space Codepoint
 		*(1*Space Codepoint)
 		*Space Break
@@ -833,7 +848,7 @@ CompatibilityMapping =
 {: id="prod.CompatibilityMapping"}
 
 A [`<CompatibilityMapping>`] defines a compatibility decomposition for a `kixt:Character`.
-It begins with a `U+007E TILDE`, followed by an optional [`<IRI>`] mode, followed by a sequence of [`<Codepoint>`]s giving the mapping.
+It begins with a `U+0028 LEFT PARENTHESIS`, followed by an optional [`<IRI>`] mode, followed by a sequence of [`<Codepoint>`]s giving the mapping.
 The entire production may be empty; if so, the character's compatibility decomposition is to itself.
 
 The value `kixt:GENERIC` indicates a generic compatibility mode and is the default.
@@ -877,7 +892,7 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 ```
 </div>
 
-#### 3.7.4 Decomposition Mapping
+#### 3.8.4 Decomposition Mapping
 {: id="definition.character.decomposition"}
 
 ```abnf
@@ -946,7 +961,7 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 ```
 </div>
 
-#### 3.7.5 Additional Properties
+#### 3.8.5 Additional Properties
 {: id="definition.character.additional"}
 
 ```abnf
@@ -972,23 +987,23 @@ SegmentationClass =
 {: id="prod.SegmentationClass"}
 ```abnf
 ConjoiningMode =
-	%x43.4F.4E.4A.4F.49.4E.53.40
-		; `CONJOINS@`
-	IRI
+	%x43.4F.4E.4A.4F.49.4E.53.3C
+		; `CONJOINS<`
+	IRI %x3E
 ```
 {: id="prod.ConjoiningType"}
 ```abnf
-Conjoins = ConjoiningMode [%x7C Integer]
+Conjoins = ConjoiningMode [Integer]
 ```
 {: id="prod.Conjoins"}
 ```abnf
-Combines = SegmentationClass [%x40 Integer]
+Combines = SegmentationClass [%x2B Integer]
 ```
 {: id="prod.Combines"}
 ```abnf
 AdditionalProperties =
 	[
-		*Space %x21
+		*Space %x26
 		*Space (
 			Deprecated [
 				1*Space (
@@ -1013,7 +1028,7 @@ AdditionalProperties =
 
 An [`<AdditionalProperties>`] defines a number of additional properties on a `kixt:Character`; in order, these are: whether the character is deprecated, whether the character is fullwidth or proportional, whether the character conjoins with previous characters of a similar type, and whether the character is a combining character.
 All of these elements are optional, but at least one must be present if the production is nonempty as a whole.
-[`<AdditionalProperties>`] begins with an `U+0021 EXCLAMATION MARK`.
+[`<AdditionalProperties>`] begins with an `U+0026 AMPERSAND`.
 
 Upon reaching an [`<AdditionalProperties>`]:
 
@@ -1029,7 +1044,7 @@ Upon reaching an [`<AdditionalProperties>`]:
 
 06. Create a new [RDF triple] with <var>current character</var> as its subject, `kixt:conjoiningClass` as its predicate, and the value of [`<Integer>`] in [`<Conjoins>`], if present, or `0`, otherwise, as its object, as an [`xsd:integer`].
 
-#### 3.7.6 Aliases
+#### 3.8.6 Aliases
 {: id="definition.character.aliases"}
 
 ```abnf
@@ -1050,7 +1065,7 @@ It consists of one or more lines, each beginning with an `U+003D EQUALS SIGN`, a
 
 Upon reaching an [`<Aliases>`], for each [`<Name>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:alias</code> as its predicate, and the value of the [`<Name>`] as its object, as an [`xsd:string`].
 
-#### 3.7.7 Other Names
+#### 3.8.7 Other Names
 {: id="definition.character.other_names"}
 
 ```abnf
@@ -1071,7 +1086,7 @@ It consists of one or more lines, each beginning with an `U+002D HYPHEN-MINUS`, 
 
 Upon reaching an [`<OtherNames>`], for each [`<NonEmptyString>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:alsoKnownAs</code> as its predicate, and the value of the [`<NonEmptyString>`] as its object, as an [`xsd:string`].
 
-#### 3.7.8 Notes
+#### 3.8.8 Notes
 {: id="definition.character.notes"}
 
 ```abnf
@@ -1092,7 +1107,7 @@ It consists of one or more lines, each beginning with an `U+002A ASTERISK`, and 
 
 Upon reaching a [`<Notes>`], for each [`<NonEmptyString>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:note</code> as its predicate, and the value of the [`<NonEmptyString>`] as its object, as an [`xsd:string`].
 
-#### 3.7.9 References
+#### 3.8.9 References
 {: id="definition.character.references"}
 
 ```abnf
@@ -1125,7 +1140,7 @@ Upon reaching a [`<References>`], for each [`<Codepoint>`]:
 
 02. Create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:compare</code> as its predicate, and <var>current item</var> as its object.
 
-#### 3.7.10 Glyphs
+#### 3.8.10 Glyphs
 {: id="definition.character.glyphs"}
 
 ```abnf
@@ -1134,7 +1149,7 @@ HexGlyph = 8*UpperHex
 {: id="prod.HexGlyph"}
 ```abnf
 Glyph =
-	*Space %x23
+	*Space %x29
 	*Space HexGlyph
 	*Space Break
 	*SingleLineComment
@@ -1146,7 +1161,7 @@ Glyphs = 1*Glyph
 {: id="prod.Glyphs"}
 
 A [`<Glyphs>`] provides a lofi black-and-white representative glyphs for a `kixt:Character`.
-It consists of one or [`<Glyph>`]s, each beginning with a `U+0023 NUMBER SIGN` and consisting of one or more lines of binary data represented in hexadecimal.
+It consists of one or [`<Glyph>`]s, each beginning with a `U+0029 RIGHT PARENTHESIS` and consisting of one or more lines of binary data represented in hexadecimal.
 Each bit of this data represents a pixel, with `0` indicating the background colour and `1` the foreground, beginning from the starting (in both horizontal and vertical directions, and travelling in the direction of the writing mode) corner of the glyph.
 
 Upon reaching a [`<Glyphs>`], for each [`<Glyph>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:representativeGlyph</code> as its predicate, and the value of [`<HexGlyph>`] as its object, as a [`xsd:hexBinary`] padded with additional terminal zeroes as necessary until the total length is even, and the total length times either four or eight is square.
@@ -1214,13 +1229,13 @@ A [Kixt Charset Definition] is <dfn id="dfn.UTF-16_compatible">UTF-16 compatible
 A [Kixt Charset Definition] is <dfn id="dfn.null_compatible">null compatible</dfn> if it is [valid][valid definition] and the objects of the [compatibility properties][compatibility property] are equal to those defined in the following Kixt Charset Definition for all characters so defined:
 
 ```kch
-CHARSET@https://charset.KIBI.network/Kixt/Null^1.0
+;CHARSET<https://charset.KIBI.network/Kixt/Null>1.0
 
 % ASCII CONTROLS AND BASIC LATIN
-@ https://vocab.KIBI.network/Kixt/#COMMON
+' <https://vocab.KIBI.network/Kixt/#COMMON>
 
 U+0000
-: 00 NULL [FORMAT]
+; 00 NULL (FORMAT)
 = NUL
 * This is a meaningless format character which can be used for byte-padding when encoding texts
 ```
@@ -1260,6 +1275,16 @@ All [XML compatible]{::} [charsets][charset] are [null compatible].
 </div>
 
 ## 5. Changelog {#changelog}
+
+{: id="changelog.2019-05-03"} <time>2019-05-03</time>
+
+: Redefined a number of syntax components to make it possible to write a Kixt Charset Definition in any ECMA-6–compatible character set.
+  By extension, you can now write a Kixt Charset Definition in any [XML compatible] charset.
+  (This is a breaking change.)
+
+: Allowed [UTF-16]–encoded documents with the addition of a BOM.
+
+: Required processors to ignore `U+0000 NULL` characters which appear in Kixt Charset Definition documents.
 
 {: id="changelog.2019-05-02"} <time>2019-05-02</time>
 

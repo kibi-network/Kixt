@@ -9,6 +9,7 @@
 [`General_Category`]: <https://www.unicode.org/reports/tr44/#Gen>
 
 [UTF-8]: <https://tools.ietf.org/html/rfc3629> "UTF-8, a transformation format of ISO 10646"
+[UTF-16]: <https://tools.ietf.org/html/rfc2781> "UTF-16, an encoding of ISO 10646"
 
 [RDF Schema]: <https://www.w3.org/TR/rdf-schema/> "RDF Schema 1.1"
 [`rdf:type`]: <https://www.w3.org/TR/rdf-schema/#ch_type>
@@ -121,10 +122,11 @@
 [`<CharsetDefinition>`]: <{{ "/-/Charset/#prod.CharsetDefinition" | absolute_url }}>
 [`<Break>`]: <{{ "/-/Charset/#prod.Break" | absolute_url }}>
 [`<Space>`]: <{{ "/-/Charset/#prod.Space" | absolute_url }}>
+[`<ECMA6Char>`]: <{{ "/-/Charset/#prod.ECMA6Char" | absolute_url }}>
 [`<ASCIIChar>`]: <{{ "/-/Charset/#prod.ASCIIChar" | absolute_url }}>
 [`<UCSChar>`]: <{{ "/-/Charset/#prod.UCSChar" | absolute_url }}>
 [`<PrivateUse>`]: <{{ "/-/Charset/#prod.PrivateUse" | absolute_url }}>
-[`<NoHat>`]: <{{ "/-/Charset/#prod.NoHat" | absolute_url }}>
+[`<NoSlash>`]: <{{ "/-/Charset/#prod.NoSlash" | absolute_url }}>
 [`<NoSpace>`]: <{{ "/-/Charset/#prod.NoSpace" | absolute_url }}>
 [`<NoBreak>`]: <{{ "/-/Charset/#prod.NoBreak" | absolute_url }}>
 [`<AnyChar>`]: <{{ "/-/Charset/#prod.AnyChar" | absolute_url }}>
