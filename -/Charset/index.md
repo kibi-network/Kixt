@@ -209,7 +209,7 @@ Specials, such as controls or noncharacters, are not allowed in a [Kixt Charset 
 ```abnf
 NoHat = %x20-5D %x5F-7E / UCSChar / PrivateUse
 ```
-{: id="prod.NoDot"}
+{: id="prod.NoHat"}
 ```abnf
 NoSpace = ASCIIChar / UCSChar / PrivateUse
 ```
