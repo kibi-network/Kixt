@@ -1251,12 +1251,6 @@ A [Kixt Charset Definition] is <dfn id="dfn.ASCII_compatible">ASCII compatible</
 All [ASCII compatible]{::} [charsets][charset] are [null compatible].
 </div>
 
-A [Kixt Charset Definition] is <dfn id="dfn.XML_compatible">XML compatible</dfn> if it is [UTF-8 compatible] and the objects of the [compatibility properties][compatibility property] are equal to those defined in <https://charset.KIBI.network/Kixt/XML> for all characters so defined.
-
-<div role="note" markdown="block">
-All [XML compatible]{::} [charsets][charset] are [null compatible].
-</div>
-
 ## 5. Changelog {#changelog}
 
 {: id="changelog.2019-05-03"} <time>2019-05-03</time>

@@ -15,6 +15,32 @@
 [WTF-8]: <https://simonsapin.github.io/wtf-8/>
 [Generalized UTF-8]: <https://simonsapin.github.io/wtf-8/#generalized-utf8>
 
+[XML 1.0]: <https://www.w3.org/TR/xml/> "Extensible Markup Language (XML) 1.0"
+[XML]: <https://www.w3.org/TR/xml11/> "Extensible Markup Language (XML) 1.1"
+[XML processor]: <https://www.w3.org/TR/xml11/#dt-xml-proc>
+[XML document]: <https://www.w3.org/TR/xml11/#dt-xml-doc>
+[XML declaration]: <https://www.w3.org/TR/xml11/#dt-xmldecl>
+[XML root]: <https://www.w3.org/TR/xml11/#dt-root>
+[XML element]: <https://www.w3.org/TR/xml11/#dt-element>
+[XML start-tag]: <https://www.w3.org/TR/xml11/#dt-start-tag>
+[XML end-tag]: <https://www.w3.org/TR/xml11/#dt-end-tag>
+[XML attribute]: <https://www.w3.org/TR/xml11/#dt-attr>
+[XML attribute name]: <https://www.w3.org/TR/xml11/#dt-attrname>
+[XML attribute value]: <https://www.w3.org/TR/xml11/#dt-attrval>
+[XML end-tag]: <https://www.w3.org/TR/xml11/#dt-end-tag>
+[XML content]: <https://www.w3.org/TR/xml11/#dt-content>
+[XML fully normalized]: <https://www.w3.org/TR/xml11/#dt-fullnorm>
+[XML `<S>`]: <https://www.w3.org/TR/xml11/#NT-S>
+[XML `<Name>`]: <https://www.w3.org/TR/xml11/#NT-Name>
+[XML `<Nmtoken>`]: <https://www.w3.org/TR/xml11/#NT-Nmtoken>
+[XML `<PubidLiteral>`]: <https://www.w3.org/TR/xml11/#NT-PubidLiteral>
+[XML `<EncodingDecl>`]: <https://www.w3.org/TR/xml11/#NT-EncodingDecl>
+
+[XML Namespaces]: <https://www.w3.org/TR/xml-names11/> "Namespaces in XML 1.1"
+[XML namespace name]: <https://www.w3.org/TR/xml-names11/#dt-NSName>
+[XML local name]: <https://www.w3.org/TR/xml-names11/#dt-localname>
+[XML `<NCName>`]: <https://www.w3.org/TR/xml11/#NT-NCName>
+
 [RDF Schema]: <https://www.w3.org/TR/rdf-schema/> "RDF Schema 1.1"
 [`rdf:type`]: <https://www.w3.org/TR/rdf-schema/#ch_type>
 [`rdf:value`]: <https://www.w3.org/TR/rdf-schema/#ch_value>
@@ -122,7 +148,6 @@
 [UTF-8 compatible]: <{{ "/-/Charset/#dfn.UTF-8_compatible" | absolute_url }}>
 [ASCII compatible]: <{{ "/-/Charset/#dfn.ASCII_compatible" | absolute_url }}>
 [null compatible]: <{{ "/-/Charset/#dfn.null_compatible" | absolute_url }}>
-[XML compatible]: <{{ "/-/Charset/#dfn.XML_compatible" | absolute_url }}>
 [`<CharsetDefinition>`]: <{{ "/-/Charset/#prod.CharsetDefinition" | absolute_url }}>
 [`<Break>`]: <{{ "/-/Charset/#prod.Break" | absolute_url }}>
 [`<Space>`]: <{{ "/-/Charset/#prod.Space" | absolute_url }}>
@@ -240,6 +265,10 @@
 [header]: <{{ "/-/Transmissions/#dfn.header" | absolute_url }}>
 [text]: <{{ "/-/Transmissions/#dfn.text" | absolute_url }}>
 
-[Kixt Algorithms]: <{{ "/-/Algorithms/#" | absolute_url }}> "Kixt Ontology"
+[Kixt XML]: <{{ "/-/XML/" | absolute_url }}> "Kixt XML"
+[Kixt XML document]: <{{ "/-/XML/#dfn.Kixt_XML_document" | absolute_url }}>
+[XML compatible]: <{{ "/-/XML/#dfn.XML_compatible" | absolute_url }}>
+
+[Kixt Algorithms]: <{{ "/-/Algorithms/#" | absolute_url }}> "Kixt Algorithms"
 [canonical decomposition]: <{{ "/-/Algorithms/#dfn.canonical_decomposition" | absolute_url }}>
 [compatibility decomposition]: <{{ "/-/Algorithms/#dfn.compatibility_decomposition" | absolute_url }}>
