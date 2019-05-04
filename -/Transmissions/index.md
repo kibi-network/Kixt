@@ -335,7 +335,7 @@ The sequence of characters representing the object of the RDF triple must have a
  +  An [RDF Collection] whose ordered items are each one of the above, with each item separated by `1E CHAPTER SEPARATOR`.
     Collections cannot be nested.
 
-##### header character sets
+##### character set
 
 The character set of [headers][header] is initially <https://charset.KIBI.network/Kixt/Transmission>.
 The predicate `kixt:charset` can be used to define the character set for all subsequent [RDF triples][RDF triple]; the object of this predicate is valid if it is an [IRI] representing a [transmission compatible] character set.
@@ -351,7 +351,10 @@ Because no character set has yet been declared, the use of `0E LEAVE` and `0F RE
 For closely-related character sets, multiple `kixt:charset` predicates may be used to indicate fallbacks should the preferred character set not be available.
 </div>
 
-The meaning of other predicates besides `kixt:charset` is not defined by this specification.
+##### media type
+
+The `kixt:mediaType` predicate can be used to specify the media type of the [text] contents of the [page].
+Its value should be a media type registered through the mechanisms of [RFC6838], as an `xsd:string`.
 
 #### 3.3.2 Page texts
 {: id="model.page.text"}

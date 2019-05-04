@@ -1,5 +1,6 @@
 [RFC2119]: <https://tools.ietf.org/html/rfc2119> "Key words for use in RFCs to Indicate Requirement Levels"
 [RFC3987]: <https://tools.ietf.org/html/rfc3987> "Internationalized Resource Identifiers (IRIs)"
+[RFC6838]: <https://tools.ietf.org/html/rfc6838> "Media Type Specifications and Registration Procedures"
 [ABNF]: <https://tools.ietf.org/html/rfc5234> "Augmented BNF for Syntax Specifications: ABNF"
 [Turtle]: <https://www.w3.org/TR/turtle/> "RDF 1.1 Turtle"
 [RDF]: <https://www.w3.org/TR/rdf11-primer/> "RDF 1.1 Primer"
