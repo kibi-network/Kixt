@@ -11,6 +11,9 @@
 [UTF-8]: <https://tools.ietf.org/html/rfc3629> "UTF-8, a transformation format of ISO 10646"
 [UTF-16]: <https://tools.ietf.org/html/rfc2781> "UTF-16, an encoding of ISO 10646"
 
+[WTF-8]: <https://simonsapin.github.io/wtf-8/>
+[Generalized UTF-8]: <https://simonsapin.github.io/wtf-8/#generalized-utf8>
+
 [RDF Schema]: <https://www.w3.org/TR/rdf-schema/> "RDF Schema 1.1"
 [`rdf:type`]: <https://www.w3.org/TR/rdf-schema/#ch_type>
 [`rdf:value`]: <https://www.w3.org/TR/rdf-schema/#ch_value>
@@ -23,6 +26,9 @@
 [blank node]: <https://www.w3.org/TR/rdf11-concepts/#dfn-blank-node>
 [literal]: <https://www.w3.org/TR/rdf11-concepts/#dfn-literal>
 [datatype IRI]: <https://www.w3.org/TR/rdf11-concepts/#dfn-datatype-iri>
+
+[RDF Semantics]: <https://www.w3.org/TR/rdf11-mt/> "RDF 1.1 Semantics"
+[RDF Collection]: <https://www.w3.org/TR/rdf11-mt/#rdf-collections>
 
 [Ordered List Ontology]: <http://purl.org/ontology/olo/core#> "The Ordered List Ontology Specification"
 [`olo:OrderedList`]: <http://purl.org/ontology/olo/core#OrderedList>
@@ -112,12 +118,9 @@
 [invalid definition]: <{{ "/-/Charset/#dfn.invalid" | absolute_url }}>
 [valid definition]: <{{ "/-/Charset/#dfn.valid" | absolute_url }}>
 [compatibility property]: <{{ "/-/Charset/#dfn.compatibility_property" | absolute_url }}>
-[UTF-16 compatible]: <{{ "/-/Charset/#dfn.UTF-16_compatible" | absolute_url }}>
+[UTF-8 compatible]: <{{ "/-/Charset/#dfn.UTF-8_compatible" | absolute_url }}>
 [ASCII compatible]: <{{ "/-/Charset/#dfn.ASCII_compatible" | absolute_url }}>
 [null compatible]: <{{ "/-/Charset/#dfn.null_compatible" | absolute_url }}>
-[variable-width compatible]: <{{ "/-/Charset/#dfn.variable-width_compatible" | absolute_url }}>
-[file compatible]: <{{ "/-/Charset/#dfn.file_compatible" | absolute_url }}>
-[terminal compatible]: <{{ "/-/Charset/#dfn.terminal_compatible" | absolute_url }}>
 [XML compatible]: <{{ "/-/Charset/#dfn.XML_compatible" | absolute_url }}>
 [`<CharsetDefinition>`]: <{{ "/-/Charset/#prod.CharsetDefinition" | absolute_url }}>
 [`<Break>`]: <{{ "/-/Charset/#prod.Break" | absolute_url }}>
@@ -212,8 +215,29 @@
 [`<Glyph>`]: <{{ "/-/Charset/#prod.Glyph" | absolute_url }}>
 [`<Glyphs>`]: <{{ "/-/Charset/#prod.Glyphs" | absolute_url }}>
 
-[Kixt Documents]: <{{ "/-/Documents/" | absolute_url }}> "Kixt Documents"
-[Kixt document]: <{{ "/-/Documents/#dfn.document" | absolute_url }}>
+[Kixt Transmissions]: <{{ "/-/Transmissions/" | absolute_url }}> "Kixt Transmissions"
+[Kixt Transmission Format]: <{{ "/-/Transmissions/#dfn.Kixt_Transmission_Format" | absolute_url }}> "Kixt Transmissions"
+[transmission compatible]: <{{ "/-/Transmissions/#dfn.transmission_compatible" | absolute_url }}>
+[variable-width compatible]: <{{ "/-/Transmissions/#dfn.variable-width_compatible" | absolute_url }}>
+[transmission character]: <{{ "/-/Transmissions/#dfn.transmission_character" | absolute_url }}>
+[data block]: <{{ "/-/Transmissions/#dfn.data_block" | absolute_url }}>
+[opening data character]: <{{ "/-/Transmissions/#dfn.opening_data_character" | absolute_url }}>
+[closing data character]: <{{ "/-/Transmissions/#dfn.closing_data_character" | absolute_url }}>
+[data contents]: <{{ "/-/Transmissions/#dfn.data_contents" | absolute_url }}>
+[Unicode mapping]: <{{ "/-/Transmissions/#dfn.Unicode_mapping" | absolute_url }}>
+[control character]: <{{ "/-/Transmissions/#dfn.control_character" | absolute_url }}>
+[transmission]: <{{ "/-/Transmissions/#dfn.transmission" | absolute_url }}>
+[encoding scheme]: <{{ "/-/Transmissions/#dfn.encoding_scheme" | absolute_url }}>
+[Generalized UTF-8]: <{{ "/-/Transmissions/#dfn.Generalized_UTF-8" | absolute_url }}>
+[Fullwidth-BE]: <{{ "/-/Transmissions/#dfn.Fullwidth-BE" | absolute_url }}>
+[Fullwidth-LE]: <{{ "/-/Transmissions/#dfn.Fullwidth-LE" | absolute_url }}>
+[Variable-BE]: <{{ "/-/Transmissions/#dfn.Variable-BE" | absolute_url }}>
+[Variable-LE]: <{{ "/-/Transmissions/#dfn.Variable-LE" | absolute_url }}>
+[transmission block]: <{{ "/-/Transmissions/#dfn.transmission_block" | absolute_url }}>
+[document]: <{{ "/-/Transmissions/#dfn.document" | absolute_url }}>
+[page]: <{{ "/-/Transmissions/#dfn.page" | absolute_url }}>
+[header]: <{{ "/-/Transmissions/#dfn.header" | absolute_url }}>
+[text]: <{{ "/-/Transmissions/#dfn.text" | absolute_url }}>
 
 [Kixt Algorithms]: <{{ "/-/Algorithms/#" | absolute_url }}> "Kixt Ontology"
 [canonical decomposition]: <{{ "/-/Algorithms/#dfn.canonical_decomposition" | absolute_url }}>

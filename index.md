@@ -22,6 +22,10 @@ Although [Unicode] generally provides an extensive and well-supported means of s
 
 : Defines the [Kixt Charset Model] and the file format for [Kixt Charset Definitions][Kixt Charset Definition].
 
+[Kixt Transmissions]
+
+: Defines the [Kixt Transmission Format] for storing and communicating Kixt texts.
+
 ## 3. Changelog {#changelog}
 
 {: id="changelog.2019-05-01"} <time>2019-05-01</time>

@@ -240,6 +240,7 @@ dt {
 	Font-Weight: Bold;
 }
 dt:Target { Margin: Calc(1EM - 3PX) -3PX -3PX }
+dt+dt { Margin-Top: 0 }
 aside dt {
 	Display: Inline;
 	Margin: 0;
@@ -285,6 +286,7 @@ h3,
 h4,
 h5,
 h6 { Color: #302F2B }
+h5 { Text-Transform: Uppercase }
 h1:Target,
 h2:Target,
 h3:Target,

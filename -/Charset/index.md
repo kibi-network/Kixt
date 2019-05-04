@@ -2,7 +2,7 @@
 
 ## Abstract {#abstract}
 
-The following specification defines a mechanism for defining character sets (*charsets*) which may be used in a [Kixt document] or rendering system.
+The following specification defines a mechanism for defining character sets (*charsets*) which may be used in a [Kixt transmission][transmission] or rendering system.
 [Kixt charsets][charset] are, as their name implies, sets of [Kixt characters][character], mapping each one to a codepoint and assigning it particular character properties.
 This document details the meaning of these properties within the [Kixt Charset Model].
 Finally, this document introduces a plain-text document format, the [Kixt Charset Definition], for describing such charsets.
@@ -33,6 +33,15 @@ This document is part of the [Kixt family of specifications][Kixt Overview].
 It is also built upon the technologies of [RDF] and [OWL].
 It makes minor use of the [Ordered List Ontology] for defining its ordered lists.
 
+In this document, the following prefixes are used to represent the following strings:
+
+| Prefix | Expansion |
+| :--: | --- |
+| `kixt:` | `https://vocab.KIBI.network/Kixt/#` |
+| `rdf:` | `http://www.w3.org/1999/02/22-rdf-syntax-ns#` |
+| `xsd:` | `http://www.w3.org/2001/XMLSchema#` |
+| `olo:` | `http://purl.org/ontology/olo/core#` |
+
 ## 2. Data Model {#model}
 
 A <dfn id="dfn.character">Kixt character</dfn> is an abstract representation of a unit of text, with associated properties and assignment to a single codepoint.
@@ -54,15 +63,6 @@ The vocabulary for this model is the [Kixt Ontology] ([OWL] document), which nor
 Although the [Kixt Charset Model] is defined using [RDF] and [OWL], it is not expected that most or even many applications which make use of it will be fully-fledged [OWL] reasoners.
 It is not presently recommended that applications interfacing with [Kixt charsets][charset] load their information from anything other than a [Kixt Charset Definition], whose resultant [RDF graph] is well-defined by this specification and may be abstracted as required.
 (However, its basis in RDF and OWL means that extensions to the Kixt Charset Model, as well as alternate means of loading and processing Kixt charsets, may conceivably be designed in the future.)
-
-In this document, the following prefixes are used to represent the following strings:
-
-| Prefix | Expansion |
-| :--: | --- |
-| `kixt:` | `https://vocab.KIBI.network/Kixt/#` |
-| `rdf:` | `http://www.w3.org/1999/02/22-rdf-syntax-ns#` |
-| `xsd:` | `http://www.w3.org/2001/XMLSchema#` |
-| `olo:` | `http://purl.org/ontology/olo/core#` |
 
 ### 2.1 Types of Resource
 {: id="model.resources"}
@@ -121,6 +121,10 @@ CharsetDefinition =
 A <dfn id="dfn.Definition">Kixt Charset Definition</dfn> is a [UTF-8] or [UTF-16]–encoded file (determined by a leading BOM, and defaulting to UTF-8 if no BOM is present) consisting of any number of block or script declarations, interspersed with any number of codepoint definitions, comments, or lines of whitespace.
 This section describes the syntax of such documents, in [ABNF] and prose.
 It also describes how processors can use [Kixt Charset Definitions][Kixt Charset Definition] to generate [RDF graphs][RDF graph].
+
+<div role="note" markdown="block">
+The file extension `.kichar` or `.kch` is suggested for [Kixt Charset Definitions].
+</div>
 
 ### 3.1 Null Handling
 
@@ -696,7 +700,7 @@ The above values are given prefixed, but the actual value of [`<IRI>`] must be a
 
 Upon reaching a [`<ScriptDeclaration>`], set <var>current script</var> to [`<IRI>`].
 
-### 3.8 Character definition
+### 3.8 Character Definition
 {: id="definition.character"}
 
 ```abnf
@@ -724,7 +728,7 @@ If <var>in a block</var> is <i>true</i>, create a new [RDF triple] with <var>cur
 
 Create a new [RDF triple] with <var>current character</var> as its subject, `kixt:script` as its predicate, and <var>current script</var> as its object.
 
-#### 3.8.1 Unicode Mapping
+#### 3.8.1 Unicode mapping
 {: id="definition.character.unicode"}
 
 ```abnf
@@ -776,7 +780,7 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 ```
 </div>
 
-#### 3.8.2 Character Info
+#### 3.8.2 Character info
 {: id="definition.character.info"}
 
 ```abnf
@@ -832,7 +836,7 @@ Upon reaching a [`<CharacterInfo>`], perform the following steps:
     Note that this is a [literal] with a [datatype IRI] of [`xsd:anyURI`], *not* an [RDF IRI][IRI].
     </div>
 
-#### 3.8.3 Compatibility Mapping
+#### 3.8.3 Compatibility mapping
 {: id="definition.character.compatibility"}
 
 ```abnf
@@ -893,7 +897,7 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 ```
 </div>
 
-#### 3.8.4 Decomposition Mapping
+#### 3.8.4 Decomposition mapping
 {: id="definition.character.decomposition"}
 
 ```abnf
@@ -962,7 +966,7 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 ```
 </div>
 
-#### 3.8.5 Additional Properties
+#### 3.8.5 Additional properties
 {: id="definition.character.additional"}
 
 ```abnf
@@ -1066,7 +1070,7 @@ It consists of one or more lines, each beginning with an `U+003D EQUALS SIGN`, a
 
 Upon reaching an [`<Aliases>`], for each [`<Name>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:alias</code> as its predicate, and the value of the [`<Name>`] as its object, as an [`xsd:string`].
 
-#### 3.8.7 Other Names
+#### 3.8.7 Other names
 {: id="definition.character.other_names"}
 
 ```abnf
@@ -1221,7 +1225,7 @@ The following predicates are <dfn id="dfn.compatibility_property">compatibility 
 + `kixt:conjoiningMode` (if defined on a character)
 + `kixt:conjoiningClass`
 
-A [Kixt Charset Definition] is <dfn id="dfn.UTF-16_compatible">UTF-16 compatible</dfn> if it is [valid][valid definition] and does not assign any of the following codepoints:
+A [Kixt Charset Definition] is <dfn id="dfn.UTF-8_compatible">UTF-8 compatible</dfn> if it is [valid][valid definition] and does not assign any of the following codepoints:
 
 + `D800`–`DFFF`
 + `FEFF`
@@ -1247,29 +1251,7 @@ A [Kixt Charset Definition] is <dfn id="dfn.ASCII_compatible">ASCII compatible</
 All [ASCII compatible]{::} [charsets][charset] are [null compatible].
 </div>
 
-A [Kixt Charset Definition] is <dfn id="dfn.variable-width_compatible">variable-width compatible</dfn> if it is [null compatible] and does not assign any codepoints in the following ranges:
-
-+ `0080`–`00FF`
-+ `0100`–`7FFF`
-+ `XY00`–`XY7F` for any `XY` in the range `01`–`7F`
-
-<div role="note" markdown="block">
-Documents with an encoding that is [variable-width compatible] can unambiguously store characters in the range `00`–`7F` as single bytes.
-</div>
-
-A [Kixt Charset Definition] is <dfn id="dfn.file_compatible">file compatible</dfn> if it is [UTF-16 compatible] and the objects of the [compatibility properties][compatibility property] are equal to those defined in <https://charset.KIBI.network/Kixt/Transmission> for all characters so defined.
-
-<div role="note" markdown="block">
-All [file compatible]{::} [charsets][charset] are [null compatible].
-</div>
-
-A [Kixt Charset Definition] is <dfn id="dfn.terminal_compatible">terminal compatible</dfn> if it is [UTF-16 compatible] and the objects of the [compatibility properties][compatibility property] are equal to those defined in <https://charset.KIBI.network/Kixt/Controls> for all characters so defined.
-
-<div role="note" markdown="block">
-All [terminal compatible]{::} [charsets][charset] are [file compatible].
-</div>
-
-A [Kixt Charset Definition] is <dfn id="dfn.XML_compatible">XML compatible</dfn> if it is [UTF-16 compatible] and the objects of the [compatibility properties][compatibility property] are equal to those defined in <https://charset.KIBI.network/Kixt/XML> for all characters so defined.
+A [Kixt Charset Definition] is <dfn id="dfn.XML_compatible">XML compatible</dfn> if it is [UTF-8 compatible] and the objects of the [compatibility properties][compatibility property] are equal to those defined in <https://charset.KIBI.network/Kixt/XML> for all characters so defined.
 
 <div role="note" markdown="block">
 All [XML compatible]{::} [charsets][charset] are [null compatible].
@@ -1286,6 +1268,8 @@ All [XML compatible]{::} [charsets][charset] are [null compatible].
 : Allowed [UTF-16]–encoded documents with the addition of a BOM.
 
 : Required processors to ignore `U+0000 NULL` characters which appear in Kixt Charset Definition documents.
+
+: Removed compatibility definitions that are better-served in other specifications.
 
 {: id="changelog.2019-05-02"} <time>2019-05-02</time>
 
