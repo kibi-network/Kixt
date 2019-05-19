@@ -1,0 +1,3 @@
+[submodule "Scripts/generateABNF"]
+	path = Scripts/generateABNF
+	url = https://github.com/kibi-network/generateABNF.git
