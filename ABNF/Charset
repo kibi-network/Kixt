@@ -353,26 +353,92 @@ Comment =
 	SingleLineComment
 	/ MultiLineComment
 
+; <#prod.Alias>:
+Alias =
+	*Space %x3D
+	*Space Name
+	*Space Break
+	*SingleLineComment
+
+; <#prod.Aliases>:
+Aliases = 1*Alias
+
+; <#prod.OtherName>:
+OtherName =
+	*Space %x2D
+	*Space NonEmptyString
+	*Space Break
+	*SingleLineComment
+
+; <#prod.OtherNames>:
+OtherNames = 1*OtherName
+
+; <#prod.Note>:
+Note =
+	*Space %x2A
+	*Space NonEmptyString
+	*Space Break
+	*SingleLineComment
+
+; <#prod.Notes>:
+Notes = 1*Note
+
 ; <#prod.CharsetDeclaration>:
 CharsetDeclaration =
+	CharsetIdentifier
+	CharsetProperties
+	[OtherNames]
+	[Notes]
+
+; <#prod.CharsetInfo>:
+CharsetIdentifier =
 	%x3B.43.48.41.52.53.45.54.3C
 		; `;CHARSET<`
 	IRI %x3E [
 		Integer
 		[%x2E Integer]
 	] *Space Break
+	*SingleLineComment
+
+; <#prod.Variable>:
+Variable = %x56.41.52.49.41.42.4C.45
+	; `VARIABLE`
+
+; <#prod.CharsetProperties>:
+CharsetProperties =
+	[
+		*Space %x26
+		*Space Variable
+		*Space Break
+		*SingleLineComment
+	]
 
 ; <#prod.BlockDeclaration>:
 BlockDeclaration =
+	BlockName
+	[Aliases]
+	[OtherNames]
+	[Notes]
+
+; <#prod.BlockName>:
+BlockName =
 	*Space %x25
 	*Space Name
 	*Space Break
+	*SingleLineComment
 
 ; <#prod.ScriptDeclaration>:
 ScriptDeclaration =
+	ScriptIdentifier
+	[OtherNames]
+	[Notes]
+
+; <#prod.ScriptIdentifier>:
+ScriptIdentifier =
 	*Space %x27
 	*Space %x3C IRI %x3E
 	*Space Break
+	*SingleLineComment
 
 ; <#prod.CharacterDefinition>:
 CharacterDefinition =
@@ -507,36 +573,6 @@ AdditionalProperties =
 		*Space Break
 		*SingleLineComment
 	]
-
-; <#prod.Alias>:
-Alias =
-	*Space %x3D
-	*Space Name
-	*Space Break
-	*SingleLineComment
-
-; <#prod.Aliases>:
-Aliases = 1*Alias
-
-; <#prod.OtherName>:
-OtherName =
-	*Space %x2D
-	*Space NonEmptyString
-	*Space Break
-	*SingleLineComment
-
-; <#prod.OtherNames>:
-OtherNames = 1*OtherName
-
-; <#prod.Note>:
-Note =
-	*Space %x2A
-	*Space NonEmptyString
-	*Space Break
-	*SingleLineComment
-
-; <#prod.Notes>:
-Notes = 1*Note
 
 ; <#prod.Reference>:
 Reference =
