@@ -60,7 +60,7 @@ This specification makes no requirements on the structure of scripts, except to 
 The <dfn id="dfn.Model">Kixt Charset Model</dfn> is an [RDF graph] which associates [charsets][charset], [characters][character], and their properties with one another according to the rules outlined in this document.
 The vocabulary for this model is the [Kixt Ontology] ([OWL] document), which normatively defines several classes and properties for use with the Model.
 
-Although the [Kixt Charset Model] is defined using [RDF] and [OWL], it is not expected that most or even many applications which make use of it will be fully-fledged [OWL] reasoners.
+Although the [Kixt Charset Model] is defined using [RDF] and [OWL], it is not expected that most or even many applications which make use of it will be fully-fledged OWL reasoners.
 It is not presently recommended that applications interfacing with [Kixt charsets][charset] load their information from anything other than a [Kixt Charset Definition], whose resultant [RDF graph] is well-defined by this specification and may be abstracted as required.
 (However, its basis in RDF and OWL means that extensions to the Kixt Charset Model, as well as alternate means of loading and processing Kixt charsets, may conceivably be designed in the future.)
 
@@ -70,7 +70,7 @@ It is not presently recommended that applications interfacing with [Kixt charset
 There are two major types of resource in the Kixt Charset Model: [charsets][charset] and [characters][character].
 These are represented by the classes `kixt:Charset` and `kixt:Character`.
 In addition to these, `kixt:Block` and `kixt:Script` represent [blocks][block] and [scripts][script] of characters, respectively.
-Only `kixt:Charset` need explicitly be declared as the [`rdf:type`] of a resource; the remaining classes are implied through instance's assignment to various properties (`kixt:character`, `kixt:block`, `kixt:script`).
+Only `kixt:Charset` need explicitly be declared as the [`rdf:type`] of a resource; the remaining classes are implied through an instance's assignment to various properties (`kixt:character`, `kixt:block`, `kixt:script`).
 
 Many other classes of resource are defined in the [Kixt Ontology].
 However, knowledge of their existence is not required for the processes described in this document.
@@ -123,7 +123,7 @@ This section describes the syntax of such documents, in [ABNF] and prose.
 It also describes how processors can use [Kixt Charset Definitions][Kixt Charset Definition] to generate [RDF graphs][RDF graph].
 
 <div role="note" markdown="block">
-The file extension `.kichar` or `.kch` is suggested for [Kixt Charset Definitions].
+The file extension `.kichar` or `.kch` is suggested for [Kixt Charset Definitions][Kixt Charset Definition].
 </div>
 
 ### 3.1 Null Handling
@@ -588,7 +588,7 @@ Only codepoints in the range `U+0000..U+10FFFF` are valid Unicode codepoints.
 
 Binary codepoints may have single spaces between their digits.
 
-Integer values are expressed as hexadecimal numbers from `0`–`FFFF`, with no leading zeros.
+Integer values are expressed as hexadecimal numbers from `0`–`FFFF`, with no more than four digits (including leading zeroes).
 
 ### 3.4 Comment
 {: id="definition.comment"}
@@ -628,24 +628,107 @@ Comments should be ignored during processing.
 Note that multi-line comments can only appear on the "top level" and not inside of character declarations or other productions.
 </div>
 
-### 3.5 Charset Declaration
+### 3.5 Common Constructs
+{: id="definition.common"}
+
+The following productions are used in multiple types of declaration, with similar meanings.
+
+#### 3.5.1 Aliases
+{: id="definition.common.aliases"}
+
+```abnf
+Alias =
+	*Space %x3D
+	*Space Name
+	*Space Break
+	*SingleLineComment
+```
+{: id="prod.Alias"}
+```abnf
+Aliases = 1*Alias
+```
+{: id="prod.Aliases"}
+
+An [`<Aliases>`] gives alternate [`<Name>`]s by which a `kixt:Block` or `kixt:Character` might be known.
+It consists of one or more lines, each beginning with an `U+003D EQUALS SIGN`, and followed by a [`<Name>`].
+
+Upon reaching an [`<Aliases>`], for each [`<Name>`], create a new [RDF triple] with <var>current parent</var> as its subject, <code>kixt:alias</code> as its predicate, and the value of the [`<Name>`] as its object, as an [`xsd:string`].
+
+#### 3.5.2 Other names
+{: id="definition.common.other_names"}
+
+```abnf
+OtherName =
+	*Space %x2D
+	*Space NonEmptyString
+	*Space Break
+	*SingleLineComment
+```
+{: id="prod.OtherName"}
+```abnf
+OtherNames = 1*OtherName
+```
+{: id="prod.OtherNames"}
+
+An [`<OtherNames>`] gives alternate names for a `kixt:Charset`, `kixt:Block`, `kixt:Script`, or `kixt:Character`, which may be more freeform than the [`<Name>`] production allows.
+It consists of one or more lines, each beginning with an `U+002D HYPHEN-MINUS`, and followed by a [`<NonEmptyString>`].
+
+Upon reaching an [`<OtherNames>`], for each [`<NonEmptyString>`], create a new [RDF triple] with <var>current parent</var> as its subject, <code>kixt:alsoKnownAs</code> as its predicate, and the value of the [`<NonEmptyString>`] as its object, as an [`xsd:string`].
+
+#### 3.5.3 Notes
+{: id="definition.common.notes"}
+
+```abnf
+Note =
+	*Space %x2A
+	*Space NonEmptyString
+	*Space Break
+	*SingleLineComment
+```
+{: id="prod.Note"}
+```abnf
+Notes = 1*Note
+```
+{: id="prod.Notes"}
+
+A [`<Notes>`] gives a freeform space for adding informative notes to a `kixt:Charset`, `kixt:Block`, `kixt:Script`, or `kixt:Character`.
+It consists of one or more lines, each beginning with an `U+002A ASTERISK`, and followed by a [`<NonEmptyString>`].
+
+Upon reaching a [`<Notes>`], for each [`<NonEmptyString>`], create a new [RDF triple] with <var>current parent</var> as its subject, <code>kixt:note</code> as its predicate, and the value of the [`<NonEmptyString>`] as its object, as an [`xsd:string`].
+
+### 3.6 Charset Declaration
 {: id="definition.charset"}
 
 ```abnf
 CharsetDeclaration =
-	%x3B.43.48.41.52.53.45.54.3C
-		; `;CHARSET<`
-	IRI %x3E [
-		Integer
-		[%x2E Integer]
-	] *Space Break
+	CharsetIdentifier
+	CharsetProperties
+	[OtherNames]
+	[Notes]
 ```
 {: id="prod.CharsetDeclaration"}
 
 A [`<CharsetDeclaration>`] defines the [Kixt Charset Definition]'s `kixt:Charset`.
 It must be the first thing in a Kixt Charset Definition, after an optional `U+FEFF Byte Order Mark`, with no leading spaces or breaks.
 
-Upon reaching a [`<CharsetDeclaration>`], set the <var>current charset</var> to the IRI specified by [`<IRI>`].
+#### 3.6.1 Charset identifier
+{: id="definition.charset.identifier"}
+
+```abnf
+CharsetIdentifier =
+	%x3B.43.48.41.52.53.45.54.3C
+		; `;CHARSET<`
+	IRI %x3E [
+		Integer
+		[%x2E Integer]
+	] *Space Break
+	*SingleLineComment
+```
+{: id="prod.CharsetInfo"}
+
+A [`<CharsetIdentifier>`] defines the IRI and version for a [Kixt Charset Definition]'s `kixt:Charset`.
+Upon reaching a [`<CharsetIdentifier>`], set the <var>current charset</var> to the IRI specified by [`<IRI>`].
+Set <var>current parent</var> to <var>current charset</var>.
 Create an [RDF triple] with the <var>current charset</var> as its subject, [`rdf:type`] as its predicate, and `kixt:Charset` as its object.
 
 If a first [`<Integer>`] is present, create an [RDF triple] with the <var>current charset</var> as its subject, `kixt:version` as its predicate, and the value of the first [`<Integer>`] as its object, as an [`xsd:integer`].
@@ -653,39 +736,96 @@ If a second [`<Integer>`] is present, create an RDF triple with the <var>current
 
 Finally, set <var>current script</var> to `kixt:UNKNOWN`; this is the default [script].
 
-### 3.6 Block Declaration
+#### 3.6.2 Charset properties
+{: id="definition.charset.properties"}
+
+```abnf
+Variable = %x56.41.52.49.41.42.4C.45
+	; `VARIABLE`
+```
+{: id="prod.Variable"}
+```abnf
+CharsetProperties =
+	[
+		*Space %x26
+		*Space Variable
+		*Space Break
+		*SingleLineComment
+	]
+```
+{: id="prod.CharsetProperties"}
+
+A [`<CharsetProperties>`] defines additional properties on a `kixt:Character`.
+At the moment, the only additional property defined is a promise as to whether the character set is [variable-width compatible].
+This property must be present if the production is nonempty.
+[`<CharsetProperties>`] begins with an `U+0026 AMPERSAND`.
+
+Upon reaching a [`<CharsetProperties>`]:
+
+01. Create a new [RDF triple] with <var>current charset</var> as its subject, `kixt:supportsVariableEncoding` as its predicate, and an object of `true`, as an [`xsd:boolean`], if [`<Variable>`] is present, and `false`, as an [`xsd:boolean`], otherwise.
+
+### 3.7 Block Declaration
 {: id="definition.block"}
 
 ```abnf
 BlockDeclaration =
-	*Space %x25
-	*Space Name
-	*Space Break
+	BlockName
+	[Aliases]
+	[OtherNames]
+	[Notes]
 ```
 {: id="prod.BlockDeclaration"}
 
 A [`<BlockDeclaration>`] defines a new `kixt:Block`.
+
+#### 3.7.1 Block name
+{: id="definition.block.name"}
+
+```abnf
+BlockName =
+	*Space %x25
+	*Space Name
+	*Space Break
+	*SingleLineComment
+```
+{: id="prod.BlockName"}
+
+A [`<BlockName>`] names a `kixt:Block`.
 It begins with a `U+0025 PERCENT SIGN`, which is followed by the block name.
 
 The special name `NO BLOCK` signifies no block.
 
-Upon reaching a [`<BlockDeclaration>`], if the value of `<Name>` is `NO BLOCK`, set <var>in a block</var> to <i>false</i>.
-Otherwise, set <var>in a block</var> to <i>true</i> and set <var>current block</var> to a new [blank node].
+Upon reaching a [`<BlockName>`], if the value of `<Name>` is `NO BLOCK`, set <var>in a block</var> to <i>false</i>.
+Otherwise, set <var>in a block</var> to <i>true</i>, set <var>current block</var> to a new [blank node], and set <var>current parent</var> to <var>current block</var>.
 
 If <var>in a block</var> is <i>true</i>, create a new [RDF triple] with <var>current block</var> as its subject, `kixt:name` as its predicate, and the value of [`<Name>`] as its object, as a [`xsd:string`].
 
-### 3.7 Script Declaration
+### 3.8 Script Declaration
 {: id="definition.script"}
 
 ```abnf
 ScriptDeclaration =
-	*Space %x27
-	*Space %x3C IRI %x3E
-	*Space Break
+	ScriptIdentifier
+	[OtherNames]
+	[Notes]
 ```
 {: id="prod.ScriptDeclaration"}
 
 A [`<ScriptDeclaration>`] defines a new `kixt:Script`.
+
+#### 3.8.1 Script identifier
+{: id="definition.script.identifier"}
+
+```abnf
+ScriptIdentifier =
+	*Space %x27
+	*Space %x3C IRI %x3E
+	*Space Break
+	*SingleLineComment
+```
+{: id="prod.ScriptIdentifier"}
+
+A [`<ScriptIdentifier>`] sets the IRI for the current `kixt:Script`.
 It begins with a `U+0027 APOSTROPHE`, which is followed by the script [`<IRI>`].
 
 Three special scripts are defined in the [Kixt Ontology]:
@@ -698,9 +838,9 @@ Three special scripts are defined in the [Kixt Ontology]:
 The above values are given prefixed, but the actual value of [`<IRI>`] must be a full (expanded) [IRI].
 </div>
 
-Upon reaching a [`<ScriptDeclaration>`], set <var>current script</var> to [`<IRI>`].
+Upon reaching a [`<ScriptIdentifier>`], set <var>current script</var> to [`<IRI>`] and <var>current parent</var> to <var>current script</var>.
 
-### 3.8 Character Definition
+### 3.9 Character Definition
 {: id="definition.character"}
 
 ```abnf
@@ -722,13 +862,14 @@ A [`<CharacterDefinition>`] defines a single `kixt:Character`.
 The [`<UnicodeMapping>`] and [`<CharacterInfo>`] productions are required; the [`<CompatibilityMapping>`], [`<DecompositionMapping>`], and [`<AdditionalProperties>`] productions are required but may be empty; all other productions are optional but must be specified in the order above.
 
 Upon reaching a [`<CharacterDefinition>`], set <var>current character</var> to a new [blank node].
+Set <var>current parent</var> to <var>current character</var>.
 Create a new [RDF triple] with <var>current charset</var> as its subject, `kixt:character` as its predicate, and <var>current character</var> as its object.
 
 If <var>in a block</var> is <i>true</i>, create a new [RDF triple] with <var>current character</var> as its subject, `kixt:block` as its predicate, and <var>current block</var> as its object.
 
 Create a new [RDF triple] with <var>current character</var> as its subject, `kixt:script` as its predicate, and <var>current script</var> as its object.
 
-#### 3.8.1 Unicode mapping
+#### 3.9.1 Unicode mapping
 {: id="definition.character.unicode"}
 
 ```abnf
@@ -780,7 +921,7 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 ```
 </div>
 
-#### 3.8.2 Character info
+#### 3.9.2 Character info
 {: id="definition.character.info"}
 
 ```abnf
@@ -836,7 +977,7 @@ Upon reaching a [`<CharacterInfo>`], perform the following steps:
     Note that this is a [literal] with a [datatype IRI] of [`xsd:anyURI`], *not* an [RDF IRI][IRI].
     </div>
 
-#### 3.8.3 Compatibility mapping
+#### 3.9.3 Compatibility mapping
 {: id="definition.character.compatibility"}
 
 ```abnf
@@ -897,7 +1038,7 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 ```
 </div>
 
-#### 3.8.4 Decomposition mapping
+#### 3.9.4 Decomposition mapping
 {: id="definition.character.decomposition"}
 
 ```abnf
@@ -966,7 +1107,7 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 ```
 </div>
 
-#### 3.8.5 Additional properties
+#### 3.9.5 Additional properties
 {: id="definition.character.additional"}
 
 ```abnf
@@ -1049,70 +1190,7 @@ Upon reaching an [`<AdditionalProperties>`]:
 
 06. Create a new [RDF triple] with <var>current character</var> as its subject, `kixt:conjoiningClass` as its predicate, and the value of [`<Integer>`] in [`<Conjoins>`], if present, or `0`, otherwise, as its object, as an [`xsd:integer`].
 
-#### 3.8.6 Aliases
-{: id="definition.character.aliases"}
-
-```abnf
-Alias =
-	*Space %x3D
-	*Space Name
-	*Space Break
-	*SingleLineComment
-```
-{: id="prod.Alias"}
-```abnf
-Aliases = 1*Alias
-```
-{: id="prod.Aliases"}
-
-An [`<Aliases>`] gives alternate [`<Name>`]s by which a `kixt:Character` might be known.
-It consists of one or more lines, each beginning with an `U+003D EQUALS SIGN`, and followed by a [`<Name>`].
-
-Upon reaching an [`<Aliases>`], for each [`<Name>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:alias</code> as its predicate, and the value of the [`<Name>`] as its object, as an [`xsd:string`].
-
-#### 3.8.7 Other names
-{: id="definition.character.other_names"}
-
-```abnf
-OtherName =
-	*Space %x2D
-	*Space NonEmptyString
-	*Space Break
-	*SingleLineComment
-```
-{: id="prod.OtherName"}
-```abnf
-OtherNames = 1*OtherName
-```
-{: id="prod.OtherNames"}
-
-An [`<OtherNames>`] gives alternate names for a `kixt:Character`, which may be more freeform than the [`<Name>`] production allows.
-It consists of one or more lines, each beginning with an `U+002D HYPHEN-MINUS`, and followed by a [`<NonEmptyString>`].
-
-Upon reaching an [`<OtherNames>`], for each [`<NonEmptyString>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:alsoKnownAs</code> as its predicate, and the value of the [`<NonEmptyString>`] as its object, as an [`xsd:string`].
-
-#### 3.8.8 Notes
-{: id="definition.character.notes"}
-
-```abnf
-Note =
-	*Space %x2A
-	*Space NonEmptyString
-	*Space Break
-	*SingleLineComment
-```
-{: id="prod.Note"}
-```abnf
-Notes = 1*Note
-```
-{: id="prod.Notes"}
-
-A [`<Notes>`] gives a freeform space for adding informative notes to a `kixt:Character`.
-It consists of one or more lines, each beginning with an `U+002A ASTERISK`, and followed by a [`<NonEmptyString>`].
-
-Upon reaching a [`<Notes>`], for each [`<NonEmptyString>`], create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:note</code> as its predicate, and the value of the [`<NonEmptyString>`] as its object, as an [`xsd:string`].
-
-#### 3.8.9 References
+#### 3.9.6 References
 {: id="definition.character.references"}
 
 ```abnf
@@ -1145,7 +1223,7 @@ Upon reaching a [`<References>`], for each [`<Codepoint>`]:
 
 02. Create a new [RDF triple] with <var>current character</var> as its subject, <code>kixt:compare</code> as its predicate, and <var>current item</var> as its object.
 
-#### 3.8.10 Glyphs
+#### 3.9.7 Glyphs
 {: id="definition.character.glyphs"}
 
 ```abnf
@@ -1195,7 +1273,7 @@ In addition to the constraints made by the [ABNF] syntax, the following situatio
     In other words, if a [character] has a compatibility decomposition of itself, then it must have the default compatibility mode of `kixt:GENERIC`.
     </div>
 
-04. Assigning the same value as the object of a `kixt:name` or `kixt:alias` predicate for two different subjects (`kixt:name` and `kixt:alias` must be unique within a shared namespace).
+04. Assigning the same value as the object of a `kixt:name` or `kixt:alias` predicate for two different subjects of the same `rdf:type` (`kixt:name` and `kixt:alias` must be unique within a shared namespace).
 
 05. Assigning `kixt:INHERITED` as the object of a `kixt:script` predicate while processing a [`<CharacterDefinition>`] which does not contain a [`<Combines>`].
 
@@ -1208,6 +1286,8 @@ In addition to the constraints made by the [ABNF] syntax, the following situatio
     <div role="note" markdown="block">
     Another way of expressing this constraint is that every [`<Codepoint>`] in a [`<CompatibilityMapping>`], [`<DecompositionMapping>`], or [`<Reference>`] must identify a `kixt:Character` defined in the same document.
     </div>
+
+09. Creating a `kixt:Charset` which is not [variable-width compatible] but for which `kixt:variable` is `true`.
 
 A [Kixt Charset Definition] is <dfn id="dfn.valid">valid</dfn> if it is not [invalid][invalid definition].
 
@@ -1252,6 +1332,12 @@ All [ASCII compatible]{::} [charsets][charset] are [null compatible].
 </div>
 
 ## 5. Changelog {#changelog}
+
+{: id="changelog.2019-09-05"} <time>2019-09-05</time>
+
+: Allowed the specification of other names and notes on charsets, blocks, and scripts, and aliases on blocks.
+
+: Added a variable-width promise (`kixt:supportsVariableEncoding`) to charset declarations.
 
 {: id="changelog.2019-05-03"} <time>2019-05-03</time>
 

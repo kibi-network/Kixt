@@ -63,7 +63,8 @@ In this specification, characters within a character set are identified by codep
 For purposes of readability, the name used in <https://charset.KIBI.network/Kixt/Controls> is also provided.
 However, there is no requirement that all [transmission compatible] character sets necessarily use these same names.
 
-A character set is <dfn id="dfn.variable-width_compatible">variable-width compatible</dfn> if it only contains codepoints in the range `0000`–`FFFF`, and the set of bytes used for the most significant and least significant places of characters are disjoint for all codepoints greater than `0000`.
+A character set is <dfn id="dfn.variable-width_compatible">variable-width compatible</dfn> if it only defines codepoints in the range `0000`–`FFFF`, and the set of bytes used for the most significant and least significant places of characters are disjoint for all codepoints greater than `0000`.
+A character set defined by a [Kixt Charset Definition] is additionally only variable-width compatible if the value of its `kixt:supportsVariableEncoding` property is `true`.
 
 <div role="note" markdown="block">
 The requirement of disjointedness for [variable-width compatible] character sets means that determining the codepoint a byte belongs to only requires looking at the previous or next byte.
@@ -181,13 +182,11 @@ The Unicode control characters are any characters in the range `01`–`0D`, `10`
 
 <div role="note" markdown="block">
 Note that this includes such [control characters][control character] as `09 NEXT` (`TAB`) and `0A ADVANCE` (`LINE FEED`), which are commonly-used in non-Kixt documents.
+These characters should not be used in [Kixt documents][document].
 </div>
 
 All [control characters][control character] are invalid within [documents][document] and should be replaced with `1A INVALID` on reading.
 The meaning of control characters outside of documents is not defined by this specification.
-
-<div role="note">
-</div>
 
 ### 2.3 Unicode mappings
 {: id="character.mapping"}
@@ -196,7 +195,13 @@ For any [Kixt charset][charset], the <dfn id="dfn.Unicode_mapping">Unicode mappi
 
 1. For each character which is not part of a [data block], replacing the corresponding assigned [Kixt character][character] with the codepoints, in order, indicated by the `kixt:unicode` property, or with `FFFD` if no character has been assigned.
 
-2. For each [data block] which begins with `0E LEAVE` and ends with `0F RETURN`, replacing the data block with the codepoints which result from interpreting its [data contents] as a sequence of UTF-16 code units (as defined by [Unicode]), replacing any ill-formed code unit subsequence with `FFFD`.
+2. For each [data block] which begins with `0E LEAVE` and ends with `0F RETURN`, replacing the data block with the codepoints which result from interpreting its [data contents] as a sequence of UTF-16 code units (as defined by [Unicode]), interpreting any ill-formed code unit subsequence as `FFFD`.
+
+    <div role="note" markdown="block">
+    For clarity:
+    These code units may in fact be encoded using UTF-8, depending on the character set of the transmission.
+    The [data contents] of a [data block] are a sequence of 16-bit codepoints, not the sequence of bytes which represent them in any given encoding form.
+    </div>
 
 3. For other [data blocks][data block], the single character `FFFC`, unless specified otherwise by a relevant specification.
 
@@ -229,25 +234,28 @@ Five possible encoding schemes are defined:
   For [Kixt charsets][charset], each codepoint is represented as a sequence of two bytes, with the least significant byte first.
 
 <dfn id="dfn.Variable-BE">Variable-BE</dfn>
-: For [variable-width compatible]{::} character set, each codepoint is represented as a sequence of either:
+: For [variable-width compatible]{::} character set, each codepoint within the [text] of a [document] is represented as a sequence of either:
 
   01. For characters for which one byte is `00`, the other byte.
 
   02. For all other characters, the codepoint a sequence two bytes, with the most significant byte first.
 
-  For all other character sets, the same as [Fullwidth-BE].
+  For all other character sets, and outside of [texts][text], the same as [Fullwidth-BE].
 
 <dfn id="dfn.Variable-LE">Variable-LE</dfn>
-: For [variable-width compatible]{::} character set, each codepoint is represented as a sequence of either:
+: For [variable-width compatible]{::} character set, each codepoint within the [text] of a [document] is represented as a sequence of either:
 
   01. For characters for which one byte is `00`, the other byte.
 
   02. For all other characters, the codepoint a sequence two bytes, with the least significant byte first.
 
-  For all other character sets, the same as [Fullwidth-LE].
+  For all other character sets, and outside of [texts][text], the same as [Fullwidth-LE].
 
 <div role="note" markdown="block">
 For [transmission compatible] character sets, the `00` byte will always be the most significant byte.
+The primary advantage to variable-width encodings is that they allow ASCII texts to be interpreted without modification, while otherwise maintaining a 16-bit encoding scheme.
+
+It is recommended that the bytes `80–9F` and `E0–FF` be used as most-significant bytes, and that the characters `A0–DF` be used as least-significant bytes.
 </div>
 
 The [encoding scheme] applies to all characters in a [transmission], regardless of character set.
@@ -341,11 +349,12 @@ The character set of [headers][header] is initially <https://charset.KIBI.networ
 The predicate `kixt:charset` can be used to define the character set for all subsequent [RDF triples][RDF triple]; the object of this predicate is valid if it is an [IRI] representing a [transmission compatible] character set.
 If multiple `kixt:charset` predicates with valid objects are declared in a header, all but the first are ignored.
 
-The IRI `http://www.unicode.org/versions/latest/` identifies the [Unicode] character set.
-
 <div role="note" markdown="block">
 Because no character set has yet been declared, the use of `0E LEAVE` and `0F RETURN` is required to define the `kixt:charset` of a [header].
+This is intentional, as it explicitly forces the character set of a `kixt:charset` declaration to be Unicode.
 </div>
+
+The IRI `http://www.unicode.org/versions/latest/` identifies the [Unicode] character set.
 
 <div role="note" markdown="block">
 For closely-related character sets, multiple `kixt:charset` predicates may be used to indicate fallbacks should the preferred character set not be available.
@@ -365,6 +374,7 @@ Texts can also be opened explicitly with a `02 BEGIN` character.
 Texts continue until the end of the page.
 
 If a [page] ends before a [text] is opened, it has an empty text.
+The opening and closing `02 BEGIN` and `03 END` characters, if present, are not considered part of a text's contents.
 
 If a `kixt:charset` with a valid object was declared in the [header] to the [page] containing a [text], it provides the character set of the text.
 Otherwise, the character set of the text is left to programs to determine.
@@ -375,6 +385,20 @@ As a consequence of the above rules, and in the absence of any special configura
 </div>
 
 ## 4. Changelog {#changelog}
+
+{: id="changelog.2019-09-05"} <time>2019-09-05</time>
+
+: Clarified that variable-width encodings are fixed-width outside of [texts][text].
+
+    <aside markdown="block">
+    [Issue #2](https://github.com/kibi-network/Kixt/issues/2)
+    : \[Transmissions] Clarify variable-width behaviours
+    </aside>
+
+: Clarified the UTF-16 interpretation of the [data contents] of a `0E LEAVE` [data block].
+
+: A Kixt charset is now only [variable-width compatible] if it has a `true` `kixt:supportsVariableEncoding`.
+    This provides charsets with a mechanism for forward-compatibility guarantees (or not).
 
 {: id="changelog.2019-05-03"} <time>2019-05-03</time>
 
