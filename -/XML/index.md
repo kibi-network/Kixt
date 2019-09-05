@@ -17,7 +17,7 @@ The following specification defines a means of creating [XML documents][XML docu
 {: id="introduction.purpose"}
 
 The [Kixt Transmission Format] allows for the association of metadata with [documents][document] through the use of [headers][header].
-However, using this format to specify character sets in a manner compatible with non–Kixt-aware [XML processors][XML processor] is impossible, due to its reliance on characters prohibited in [XML documents].
+However, using this format to specify character sets in a manner compatible with non–Kixt-aware [XML processors][XML processor] is impossible, due to its reliance on characters prohibited in [XML documents][XML document].
 This specification defines a subset of the [XML] syntax which may be used to encode texts written in a [Kixt charset][charset].
 The resulting document is called a <dfn id="dfn.Kixt_XML_document">Kixt XML document</dfn>.
 
@@ -77,7 +77,16 @@ The character set for the [contents][XML content] of any [XML element] can be ch
 If the [value][XML attribute value] of this attribute is the IRI of a supported, [XML compatible] character set, then this is the character set of the element's contents.
 Otherwise, the character set of the element's contents is the same as that for its parent, or, in the case of the [root element][XML root], the document as a whole.
 
-## 4. Changelog {#changelog}
+## 4. Security {#security}
+
+Using non-Unicode character sets within a document may make scripted [Kixt XML documents][Kixt XML document] more difficult to sanitize.
+It is advised that processors of scripted documents which may contain unsafe information fail to recognize *all* character set IRIs, effectively locking the character set into Unicode, unless the character sets supported by a sanitization filter are known.
+
+## 5. Changelog {#changelog}
+
+{: id="changelog.2019-09-05"} <time>2019-09-05</time>
+
+: Added [Security](#security) section.
 
 {: id="changelog.2019-05-03"} <time>2019-05-03</time>
 
