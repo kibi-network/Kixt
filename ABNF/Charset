@@ -329,7 +329,9 @@ BinaryCodepoint =
 	/ Zero *([Space] Zero)
 
 ; <#prod.Integer>:
-Integer = 1*4UpperHex
+Integer =
+	Zero
+	/ NonZeroHex *3UpperHex
 
 ; <#prod.SingleLineComment>:
 SingleLineComment =

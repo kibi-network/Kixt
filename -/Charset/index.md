@@ -573,7 +573,9 @@ BinaryCodepoint =
 ```
 {: id="prod.BinaryCodepoint"}
 ```abnf
-Integer = 1*4UpperHex
+Integer =
+	Zero
+	/ NonZeroHex *3UpperHex
 ```
 {: id="prod.Integer"}
 
@@ -588,7 +590,7 @@ Only codepoints in the range `U+0000..U+10FFFF` are valid Unicode codepoints.
 
 Binary codepoints may have single spaces between their digits.
 
-Integer values are expressed as hexadecimal numbers from `0`–`FFFF`, with no more than four digits (including leading zeroes).
+Integer values are expressed as hexadecimal numbers from `0`–`FFFF`, with no leading zeroes.
 
 ### 3.4 Comment
 {: id="definition.comment"}
@@ -1346,7 +1348,7 @@ All [ASCII compatible]{::} [charsets][charset] are [null compatible].
 
 : Added a variable-width promise (`kixt:supportsVariableEncoding`) to charset declarations.
 
-: The syntax for [`<InnerCommentLine>`] was improved.
+: The syntaxes for [`<Integer>`] and [`<InnerCommentLine>`] were improved.
 
 {: id="changelog.2019-05-03"} <time>2019-05-03</time>
 
