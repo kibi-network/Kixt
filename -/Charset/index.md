@@ -602,8 +602,12 @@ SingleLineComment =
 {: id="prod.SingleLineComment"}
 ```abnf
 InnerCommentLine =
-	*2NoBreak Break
-	/ 3NoSlash *NoBreak Break
+	(
+		NoSlash
+		/ %x2F NoSlash
+		/ %x2F.2F NoSlash
+		/ %x2F.2F.2F NoBreak
+	)  *NoBreak Break
 ```
 {: id="prod.InnerCommentLine"}
 ```abnf
@@ -794,8 +798,9 @@ A [`<BlockName>`] names a `kixt:Block`.
 It begins with a `U+0025 PERCENT SIGN`, which is followed by the block name.
 
 The special name `NO BLOCK` signifies no block.
+A [`<BlockDeclaration>`] with a [`<Name>`] of `NO BLOCK` must not have a [`<Aliases>`], [`<OtherNames>`], or [`<Notes>`].
 
-Upon reaching a [`<BlockName>`], if the value of `<Name>` is `NO BLOCK`, set <var>in a block</var> to <i>false</i>.
+Upon reaching a [`<BlockName>`], if the value of [`<Name>`] is `NO BLOCK`, set <var>in a block</var> to <i>false</i>.
 Otherwise, set <var>in a block</var> to <i>true</i>, set <var>current block</var> to a new [blank node], and set <var>current parent</var> to <var>current block</var>.
 
 If <var>in a block</var> is <i>true</i>, create a new [RDF triple] with <var>current block</var> as its subject, `kixt:name` as its predicate, and the value of [`<Name>`] as its object, as a [`xsd:string`].
@@ -1263,31 +1268,33 @@ Processors of Kixt Charset Definitions must fail to process any Kixt Charset Def
 
 In addition to the constraints made by the [ABNF] syntax, the following situations are all semantically <dfn id="dfn.invalid">invalid</dfn> in a [Kixt Charset Definition]:
 
-01. Two or more [`<BlockDeclaration>`]s with identical [`<Name>`]s.
+01. Two or more [`<BlockDeclaration>`]s with identical [`<Name>`]s, when both are not `NO BLOCK`.
 
-02. A [`<Combines>`], [`<Conjoins>`], or [`<CharacterWidth>`] in a [`<CharacterDefinition>`] which does not have a [`<BasicType>`] of `SPACING` or `NONSPACING`.
+02. An [`<Aliases>`], [`<OtherNames>`], or [`<Notes>`] in a [`<BlockDeclaration>`] whose [`<Name>`] is `NO BLOCK`.
 
-03. Assigning an object other than `https://vocab.KIBI.network/Kixt/#GENERIC` for the `kixt:compatibilityMode` predicate for a subject whose `kixt:compatibility` predicate has an object with one `kixt:slot` predicate whose object has one `kixt:item` predicate whose object is the subject itself.
+03. A [`<Combines>`], [`<Conjoins>`], or [`<CharacterWidth>`] in a [`<CharacterDefinition>`] which does not have a [`<BasicType>`] of `SPACING` or `NONSPACING`.
+
+04. Assigning an object other than `https://vocab.KIBI.network/Kixt/#GENERIC` for the `kixt:compatibilityMode` predicate for a subject whose `kixt:compatibility` predicate has an object with one `kixt:slot` predicate whose object has one `kixt:item` predicate whose object is the subject itself.
 
     <div role="note" markdown="block">
     In other words, if a [character] has a compatibility decomposition of itself, then it must have the default compatibility mode of `kixt:GENERIC`.
     </div>
 
-04. Assigning the same value as the object of a `kixt:name` or `kixt:alias` predicate for two different subjects of the same `rdf:type` (`kixt:name` and `kixt:alias` must be unique within a shared namespace).
+05. Assigning the same value as the object of a `kixt:name` or `kixt:alias` predicate for two different subjects of the same `rdf:type` (`kixt:name` and `kixt:alias` must be unique within a shared namespace).
 
-05. Assigning `kixt:INHERITED` as the object of a `kixt:script` predicate while processing a [`<CharacterDefinition>`] which does not contain a [`<Combines>`].
+06. Assigning `kixt:INHERITED` as the object of a `kixt:script` predicate while processing a [`<CharacterDefinition>`] which does not contain a [`<Combines>`].
 
-06. Assigning the same object for a `kixt:codepoint` predicate while processing two different [`<CharacterInfo>`]s.
+07. Assigning the same object for a `kixt:codepoint` predicate while processing two different [`<CharacterInfo>`]s.
 
-07. Assigning the multiple objects with the same length for a `kixt:representativeGlyph` predicate for a single subject.
+08. Assigning the multiple objects with the same length for a `kixt:representativeGlyph` predicate for a single subject.
 
-08. Finishing processing the [Kixt Charset Definition] when not every `kixt:character` predicate with a subject of <var>current charset</var> has an object for which a `kixt:basicType` predicate has been assigned.
+09. Finishing processing the [Kixt Charset Definition] when not every `kixt:character` predicate with a subject of <var>current charset</var> has an object for which a `kixt:basicType` predicate has been assigned.
 
     <div role="note" markdown="block">
     Another way of expressing this constraint is that every [`<Codepoint>`] in a [`<CompatibilityMapping>`], [`<DecompositionMapping>`], or [`<Reference>`] must identify a `kixt:Character` defined in the same document.
     </div>
 
-09. Creating a `kixt:Charset` which is not [variable-width compatible] but for which `kixt:variable` is `true`.
+10. Creating a `kixt:Charset` which is not [variable-width compatible] but for which `kixt:variable` is `true`.
 
 A [Kixt Charset Definition] is <dfn id="dfn.valid">valid</dfn> if it is not [invalid][invalid definition].
 
@@ -1338,6 +1345,8 @@ All [ASCII compatible]{::} [charsets][charset] are [null compatible].
 : Allowed the specification of other names and notes on charsets, blocks, and scripts, and aliases on blocks.
 
 : Added a variable-width promise (`kixt:supportsVariableEncoding`) to charset declarations.
+
+: The syntax for [`<InnerCommentLine>`] was improved.
 
 {: id="changelog.2019-05-03"} <time>2019-05-03</time>
 

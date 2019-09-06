@@ -339,8 +339,12 @@ SingleLineComment =
 
 ; <#prod.InnerCommentLine>:
 InnerCommentLine =
-	*2NoBreak Break
-	/ 3NoSlash *NoBreak Break
+	(
+		NoSlash
+		/ %x2F NoSlash
+		/ %x2F.2F NoSlash
+		/ %x2F.2F.2F NoBreak
+	)  *NoBreak Break
 
 ; <#prod.MultiLineComment>:
 MultiLineComment =
