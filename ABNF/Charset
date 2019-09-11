@@ -473,8 +473,8 @@ UnicodeMapping = 1*Unicode
 BasicType =
 	%x43.4F.4E.54.52.4F.4C
 		; `CONTROL`
-	/ %x54.52.41.4E.53.4D.49.53.53.49.4F.4E
-		; `TRANSMISSION`
+	/ %x4D.45.53.53.41.47.49.4E.47
+		; `MESSAGING`
 	/ %x46.4F.52.4D.41.54
 		; `FORMAT`
 	/ %x44.41.54.41
