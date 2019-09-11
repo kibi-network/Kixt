@@ -85,7 +85,7 @@ It also introduces five new datatypes:
 
     + `https://vocab.KIBI.network/Kixt/#UNASSIGNED`
     + `https://vocab.KIBI.network/Kixt/#CONTROL`
-    + `https://vocab.KIBI.network/Kixt/#TRANSMISSION`
+    + `https://vocab.KIBI.network/Kixt/#MESSAGING`
     + `https://vocab.KIBI.network/Kixt/#FORMAT`
     + `https://vocab.KIBI.network/Kixt/#DATA`
     + `https://vocab.KIBI.network/Kixt/#NONSPACING`
@@ -935,8 +935,8 @@ In [Turtle], the resulting [RDF graph] produced by the above steps will look som
 BasicType =
 	%x43.4F.4E.54.52.4F.4C
 		; `CONTROL`
-	/ %x54.52.41.4E.53.4D.49.53.53.49.4F.4E
-		; `TRANSMISSION`
+	/ %x4D.45.53.53.41.47.49.4E.47
+		; `MESSAGING`
 	/ %x46.4F.52.4D.41.54
 		; `FORMAT`
 	/ %x44.41.54.41
@@ -1341,6 +1341,10 @@ All [ASCII compatible]{::} [charsets][charset] are [null compatible].
 </div>
 
 ## 5. Changelog {#changelog}
+
+{: id="changelog.2019-09-10"} <time>2019-09-10</time>
+
+: `kixt:TRANSMISSION` has been replaced by `kixt:MESSAGING` as a `kixt:basicType`.
 
 {: id="changelog.2019-09-05"} <time>2019-09-05</time>
 

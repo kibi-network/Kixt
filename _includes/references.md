@@ -251,12 +251,16 @@
 [transmission compatible]: <{{ "/-/Transmissions/#dfn.transmission_compatible" | absolute_url }}>
 [variable-width compatible]: <{{ "/-/Transmissions/#dfn.variable-width_compatible" | absolute_url }}>
 [transmission character]: <{{ "/-/Transmissions/#dfn.transmission_character" | absolute_url }}>
+[control character]: <{{ "/-/Transmissions/#dfn.control_character" | absolute_url }}>
 [data block]: <{{ "/-/Transmissions/#dfn.data_block" | absolute_url }}>
 [opening data character]: <{{ "/-/Transmissions/#dfn.opening_data_character" | absolute_url }}>
 [closing data character]: <{{ "/-/Transmissions/#dfn.closing_data_character" | absolute_url }}>
 [data contents]: <{{ "/-/Transmissions/#dfn.data_contents" | absolute_url }}>
+[data character]: <{{ "/-/Transmissions/#dfn.data_character" | absolute_url }}>
+[message]: <{{ "/-/Transmissions/#dfn.message" | absolute_url }}>
+[messaging character]: <{{ "/-/Transmissions/#dfn.messaging_character" | absolute_url }}>
+[message contents]: <{{ "/-/Transmissions/#dfn.message_contents" | absolute_url }}>
 [Unicode mapping]: <{{ "/-/Transmissions/#dfn.Unicode_mapping" | absolute_url }}>
-[control character]: <{{ "/-/Transmissions/#dfn.control_character" | absolute_url }}>
 [transmission]: <{{ "/-/Transmissions/#dfn.transmission" | absolute_url }}>
 [encoding scheme]: <{{ "/-/Transmissions/#dfn.encoding_scheme" | absolute_url }}>
 [Generalized UTF-8]: <{{ "/-/Transmissions/#dfn.Generalized_UTF-8" | absolute_url }}>

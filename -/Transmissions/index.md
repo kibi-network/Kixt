@@ -52,8 +52,6 @@ A character set defined by a [Kixt Charset Definition] is <dfn id="dfn.transmiss
 
 + The objects of the [compatibility properties][compatibility property] are equal to those defined in <https://charset.KIBI.network/Kixt/Transmission> for all characters so defined.
 
-+ No other characters are given a `kixt:basicType` of `kixt:TRANSMISSION`.
-
 The [Unicode] character set, as well as the ASCII subset thereof, is assumed to be transmission compatible.
 Whether other character sets are transmission compatible is left undefined by this specification.
 
@@ -81,20 +79,9 @@ The following characters in a [transmission compatible] character set are <dfn i
 + `18 CANCEL`
 + `19 END`
 + `1A INVALID`
++ `7F NOTHING`
 
-A <dfn id="dfn.data_block">data block</dfn> is a sequence of codepoints which do not necessarily belong to the character set of the surrounding text.
-Every data block begins with one or more <dfn id="dfn.opening_data_character">opening data characters</dfn>, and ends with zero or more <dfn id="dfn.closing_data_character">closing data characters</dfn>.
-The <dfn id="dfn.data_contents">data contents</dfn> of a data block are the non–`00 NULL` codepoints between these two sequences, which must be in the range `0001`–`FFFD`.
-The only data block defined by this specification is the sequence of codepoints beginning with an opening data character of a valid `0E LEAVE` and ending with a closing data character of a valid `0F RETURN`.
-Other specifications may define other data blocks.
-
-<div role="note" markdown="block">
-Although the character sets of [data blocks][data block] are not necessarily known, [data contents] are nevertheless encoded the same as any other characters.
-</div>
-
-For the purposes of this specification, the characters in the [data contents] of a [data block] are neither [transmission characters][transmission character] nor [control characters][control character].
-
-### 2.1 Overview of Characters
+### 2.1 Overview of Transmission Characters
 {: id="character.overview"}
 
 The broad meanings and interpretation of the characters whose semantics are defined by this specification are given below.
@@ -174,36 +161,83 @@ Note that the specific usage of these characters will be clarified in later sect
 : Format characters for subdividing a sequence of characters into progressively finer-grained divisions.
   These have special semantics inside of [headers][header]; their usage in [texts][text] is not defined (but not prohibited) by this specification.
 
-### 2.2 Control Characters
+`7F NOTHING`
+
+: A meaningless [control character], used to signal an empty [message].
+    In all other contexts, it should be interpreted in the same manner as `16 IDLE`.
+
+### 2.2 Other Control Characters
 {: id="character.control"}
 
 The <dfn id="dfn.control_character">control characters</dfn> are, for any [Kixt charset][charset], any [character] with a `kixt:basicType` of `kixt:CONTROL`.
-The Unicode control characters are any characters in the range `01`–`0D`, `10`–`1B`, or `7F`–`9F` which are not [transmission characters][transmission character].
+The control characters of other character sets are not defined by this specification.
 
 <div role="note" markdown="block">
 Note that this includes such [control characters][control character] as `09 NEXT` (`TAB`) and `0A ADVANCE` (`LINE FEED`), which are commonly-used in non-Kixt documents.
 These characters should not be used in [Kixt documents][document].
 </div>
 
-All [control characters][control character] are invalid within [documents][document] and should be replaced with `1A INVALID` on reading.
-The meaning of control characters outside of documents is not defined by this specification.
+All [control characters][control character] which are not [transmission characters][transmission character] are invalid within [documents][document] and should be replaced with `1A INVALID` on reading.
+The meaning of control characters which are not [transmission characters][transmission character] outside of [documents][document] is not defined by this specification.
 
-### 2.3 Unicode mappings
+### 2.3 Data blocks
+
+A <dfn id="dfn.data_block">data block</dfn> is a sequence of codepoints which do not necessarily belong to the character set of the surrounding text.
+Every data block begins with one or more <dfn id="dfn.opening_data_character">opening data characters</dfn>, and ends with zero or more <dfn id="dfn.closing_data_character">closing data characters</dfn>.
+The <dfn id="dfn.data_contents">data contents</dfn> of a [data block] are the non–`00 NULL` codepoints between these two sequences.
+The only data block defined by this specification is the sequence of codepoints beginning with an opening data character of a valid `0E LEAVE` and ending with a closing data character of a valid `0F RETURN`.
+Other specifications may define other data blocks.
+
+For [Kixt charsets][charset], characters with a `kixt:basicType` of `kixt:DATA` are intended for sole use in data blocks.
+These are the <dfn id="dfn.data_character">data characters</dfn>.
+The data characters of other character sets are not defined by this specification.
+
+<div role="note" markdown="block">
+Although the character sets of [data blocks][data block] are not necessarily known, [data contents] are nevertheless encoded the same as any other characters.
+Notably, this means that any `00 NULL` characters are ignored when processing a data block.
+</div>
+
+### 2.4 Messages
+
+A <dfn id="dfn.message">message</dfn> is a sequence of codepoints which performs a similar function to a [control character].
+Each message begins with a single <dfn id="dfn.messaging_character">messaging character</dfn>.
+For any [Kixt charset][charset], the messaging characters are those characters with a `kixt:basicType` of `kixt:MESSAGING`.
+The messaging characters of other character sets are not defined by this specification.
+
+A [messaging character] may be followed by any of the following, which comprises part of the [message] and determines its <dfn id="dfn.message_contents">message contents</dfn>:
+
+ +  A single codepoint in the range `20`–`7E`.
+    In this case, the [message contents] are the given codepoint.
+
+ +  A [data block].
+    In this case, the [message contents] are the given data block in its entirety.
+
+ +  The codepoint `7F`.
+    In this case, the [message contents] are empty.
+
+Otherwise, the [message] is invalid and the [messaging character] should be replaced with a `1A INVALID` on reading.
+
+All [messages][message] are invalid within [documents][document] and the entirety of any such message should be replaced with a single `1A INVALID` on reading.
+The meaning of messages outside of [documents][document] is not defined by this specification.
+
+### 2.5 Unicode mappings
 {: id="character.mapping"}
 
 For any [Kixt charset][charset], the <dfn id="dfn.Unicode_mapping">Unicode mapping</dfn> of a sequence of codepoints is the sequence of [Unicode] characters which results from:
 
-1. For each character which is not part of a [data block], replacing the corresponding assigned [Kixt character][character] with the codepoints, in order, indicated by the `kixt:unicode` property, or with `FFFD` if no character has been assigned.
+1. For each [data character] which is not part of a [data block], `FFFD`.
 
-2. For each [data block] which begins with `0E LEAVE` and ends with `0F RETURN`, replacing the data block with the codepoints which result from interpreting its [data contents] as a sequence of UTF-16 code units (as defined by [Unicode]), interpreting any ill-formed code unit subsequence as `FFFD`.
+2. For each character which is not part of a [data block], replacing the corresponding assigned [Kixt character][character] with the codepoints, in order, indicated by the `kixt:unicode` property, or with `FFFD` if no character has been assigned.
+
+3. For each [data block] which begins with `0E LEAVE` and ends with `0F RETURN`, replacing the data block with the codepoints which result from interpreting its [data contents] as a sequence of UTF-16 code units (as defined by [Unicode]), interpreting any ill-formed code unit subsequence as `FFFD`.
 
     <div role="note" markdown="block">
     For clarity:
-    These code units may in fact be encoded using UTF-8, depending on the character set of the transmission.
-    The [data contents] of a [data block] are a sequence of 16-bit codepoints, not the sequence of bytes which represent them in any given encoding form.
+    The code units of a [data block] may in fact be encoded using UTF-8, depending on the encoding form of the transmission.
+    The [data contents] of a data block are a sequence of 16-bit codepoints, not the sequence of bytes which represent them in any given encoding form.
     </div>
 
-3. For other [data blocks][data block], the single character `FFFC`, unless specified otherwise by a relevant specification.
+4. For other [data blocks][data block], the single character `FFFC`, unless specified otherwise by a relevant specification.
 
 For a sequence of Unicode characters, the Unicode mapping is the sequence itself.
 For characters in other character sets, the Unicode mapping is not defined by this specification.
@@ -297,7 +331,7 @@ A <dfn id="dfn.document">document</dfn> is a sequence of bytes which forms a coh
 Documents may consist of any number of [pages][page].
 A [transmission] may consist of multiple documents, or only part of one.
 
-A document is automatically opened within any [transmission] whenever no document is currently open and a character is encountered which, after reading, is not a [transmission character], [control character], or part of a [data block].
+A document is automatically opened within any [transmission] whenever no document is currently open and a character is encountered which, after reading, is not a [control character] or part of a [message].
 If no document is presently open, a new document may also be explicitly opened by `01 HEAD` or `02 BEGIN`.
 Documents are closed by `19 END`.
 
@@ -319,6 +353,10 @@ A <dfn id="dfn.page">page</dfn> is a section of a [document] consisting of an op
 Documents may contain any number of pages.
 A new page is automatically opened in a document whenever no [page] is currently open and a character is encountered which, after reading, is not a [transmission character].
 Pages can also explicitly be opened with a `01 HEAD` or `02 BEGIN` character.
+
+<div role="note" markdown="block">
+[Control characters][control character] and [messages][message] have already been replaced with `1A INVALID` at this point, as we are inside of a [document].
+</div>
 
 Pages extend until the end of their document, or can be explicitly closed with a `03 FINISH` character (thus allowing the opening of a new page).
 
@@ -385,6 +423,19 @@ As a consequence of the above rules, and in the absence of any special configura
 </div>
 
 ## 4. Changelog {#changelog}
+
+
+{: id="changelog.2019-09-10"} <time>2019-09-10</time>
+
+: [Transmission characters][transmission character] now have a `kixt:basicType` of `kixt:CONTROL` and are a subset of [control characters][control character].
+
+: `7F NOTHING` is now a [transmission character].
+
+: `FFFE` and `FFFF` are now allowed in [data blocks][data block].
+
+: [Messages][message] are now formally specified.
+
+: [Data blocks][data block] which are not part of a [message] can now open a [document].
 
 {: id="changelog.2019-09-05"} <time>2019-09-05</time>
 
