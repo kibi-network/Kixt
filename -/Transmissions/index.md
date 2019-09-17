@@ -44,7 +44,7 @@ In this document, the following prefixes are used to represent the following str
 | :--: | --- |
 | `kixt:` | `https://vocab.KIBI.network/Kixt/#` |
 
-## 2. Character sets {#character}
+## 2. Character Sets {#character}
 
 A character set defined by a [Kixt Charset Definition] is <dfn id="dfn.transmission_compatible">transmission compatible</dfn> if and only if:
 
@@ -68,7 +68,16 @@ A character set defined by a [Kixt Charset Definition] is additionally only vari
 The requirement of disjointedness for [variable-width compatible] character sets means that determining the codepoint a byte belongs to only requires looking at the previous or next byte.
 </div>
 
-The following characters in a [transmission compatible] character set are <dfn id="transmission_character">transmission characters</dfn>:
+# 2.1 Control Characters
+{: id="character.control"}
+
+The <dfn id="dfn.control_character">control characters</dfn> are, for any [Kixt charset][charset], any [character] with a `kixt:basicType` of `kixt:CONTROL`.
+The control characters of other character sets are not defined by this specification.
+Many (although not all) [transmission characters][transmission character] are control characters.
+
+All [control characters][control character] which are not [transmission characters][transmission character] are invalid within [documents][document] and should be replaced with `1A INVALID` on reading.
+
+The following [control characters] in a [transmission compatible] character set are <dfn id="transmission_character">transmission characters</dfn>:
 
 + `01 HEAD`
 + `02 BEGIN`
@@ -79,9 +88,8 @@ The following characters in a [transmission compatible] character set are <dfn i
 + `18 CANCEL`
 + `19 END`
 + `1A INVALID`
-+ `7F NOTHING`
 
-### 2.1 Overview of Transmission Characters
+### 2.2 Overview of Characters
 {: id="character.overview"}
 
 The broad meanings and interpretation of the characters whose semantics are defined by this specification are given below.
@@ -89,7 +97,7 @@ Note that the specific usage of these characters will be clarified in later sect
 
 `00 NULL`
 
-: A meaningless format character.
+: A meaningless [format character].
   This character may be used for byte-padding within a source text, and does not represent anything in itself.
   All programs should ignore `00 NULL` characters whenever they appear, treating them as though they were not present.
 
@@ -132,8 +140,8 @@ Note that the specific usage of these characters will be clarified in later sect
 `16 IDLE`
 
 : A meaningless transmission character.
-  Unlike `00 NULL`, this character should not be ignored.
-  However, it is given no meaning by this specification.
+  Unlike `00 NULL`, this character should not be ignored, and is not valid in every location (for example, inside of [headers][header] or [texts][text]).
+  However, it is given no particular meaning by this specification.
 
 `17 BREAK`
 
@@ -158,29 +166,17 @@ Note that the specific usage of these characters will be clarified in later sect
 `1E CHAPTER SEPARATOR`
 `1F SECTION SEPARATOR`
 
-: Format characters for subdividing a sequence of characters into progressively finer-grained divisions.
+: [Format characters][format characters] for subdividing a sequence of characters into progressively finer-grained divisions.
   These have special semantics inside of [headers][header]; their usage in [texts][text] is not defined (but not prohibited) by this specification.
 
 `7F NOTHING`
 
 : A meaningless [control character], used to signal an empty [message].
-    In all other contexts, it should be interpreted in the same manner as `16 IDLE`.
+  Unlike `00 NULL`, this character should not be ignored, and is not valid in every location.
+  Furthermore, unlike `16 IDLE`, this is not a [transmission character] and is invalid inside of [documents][document].
+  However, it is given no particular meaning by this specification.
 
-### 2.2 Other Control Characters
-{: id="character.control"}
-
-The <dfn id="dfn.control_character">control characters</dfn> are, for any [Kixt charset][charset], any [character] with a `kixt:basicType` of `kixt:CONTROL`.
-The control characters of other character sets are not defined by this specification.
-
-<div role="note" markdown="block">
-Note that this includes such [control characters][control character] as `09 NEXT` (`TAB`) and `0A ADVANCE` (`LINE FEED`), which are commonly-used in non-Kixt documents.
-These characters should not be used in [Kixt documents][document].
-</div>
-
-All [control characters][control character] which are not [transmission characters][transmission character] are invalid within [documents][document] and should be replaced with `1A INVALID` on reading.
-The meaning of control characters which are not [transmission characters][transmission character] outside of [documents][document] is not defined by this specification.
-
-### 2.3 Data blocks
+### 2.3 Data Blocks
 
 A <dfn id="dfn.data_block">data block</dfn> is a sequence of codepoints which do not necessarily belong to the character set of the surrounding text.
 Every data block begins with one or more <dfn id="dfn.opening_data_character">opening data characters</dfn>, and ends with zero or more <dfn id="dfn.closing_data_character">closing data characters</dfn>.
@@ -194,7 +190,6 @@ The data characters of other character sets are not defined by this specificatio
 
 <div role="note" markdown="block">
 Although the character sets of [data blocks][data block] are not necessarily known, [data contents] are nevertheless encoded the same as any other characters.
-Notably, this means that any `00 NULL` characters are ignored when processing a data block.
 </div>
 
 ### 2.4 Messages
@@ -220,16 +215,18 @@ Otherwise, the [message] is invalid and the [messaging character] should be repl
 All [messages][message] are invalid within [documents][document] and the entirety of any such message should be replaced with a single `1A INVALID` on reading.
 The meaning of messages outside of [documents][document] is not defined by this specification.
 
-### 2.5 Unicode mappings
+### 2.5 Unicode Mappings
 {: id="character.mapping"}
 
 For any [Kixt charset][charset], the <dfn id="dfn.Unicode_mapping">Unicode mapping</dfn> of a sequence of codepoints is the sequence of [Unicode] characters which results from:
 
 1. For each [data character] which is not part of a [data block], `FFFD`.
 
-2. For each character which is not part of a [data block], replacing the corresponding assigned [Kixt character][character] with the codepoints, in order, indicated by the `kixt:unicode` property, or with `FFFD` if no character has been assigned.
+2. For `1A INVALID`, `FFFD` if it is inside of a [text] or [header], and `1A` otherwise.
 
-3. For each [data block] which begins with `0E LEAVE` and ends with `0F RETURN`, replacing the data block with the codepoints which result from interpreting its [data contents] as a sequence of UTF-16 code units (as defined by [Unicode]), interpreting any ill-formed code unit subsequence as `FFFD`.
+3. For each character other than `1A INVALID` which is not part of a [data block], replacing the corresponding assigned [Kixt character][character] with the codepoints, in order, indicated by the `kixt:unicode` property, or with `FFFD` if no character has been assigned.
+
+4. For each [data block] which begins with `0E LEAVE` and ends with `0F RETURN`, replacing the data block with the codepoints which result from interpreting its [data contents] as a sequence of UTF-16 code units (as defined by [Unicode]), interpreting any ill-formed code unit subsequence as `FFFD`.
 
     <div role="note" markdown="block">
     For clarity:
@@ -365,7 +362,7 @@ Pages extend until the end of their document, or can be explicitly closed with a
 
 A <dfn id="dfn.header">header</dfn> provides metadata information about a [page].
 It is opened by `01 HEAD` and continues until the start of the [text]{::} (signalled by `02 BEGIN`) or the end of the [page]{::}, whichever occurs first.
-Headers must precede texts; consequently, a page with a header necessarily must begin with `01 HEAD` (optionally preceded by any number of `16 IDLE` or `1A INVALID` characters).
+Headers must precede texts; consequently, a page with a header necessarily must begin with `01 HEAD` (optionally preceded by any number of `16 IDLE`, `1A INVALID`, or `7F NOTHING` characters).
 
 The contents of [headers][header] define [RDF triples][RDF triple] whose subject is a node representing the current document.
 The predicate and object of each triple is separated by `1D PART SEPARATOR`, and the triples themselves are separated by `1C VOLUME SEPARATOR`.
@@ -401,7 +398,7 @@ For closely-related character sets, multiple `kixt:charset` predicates may be us
 ##### media type
 
 The `kixt:mediaType` predicate can be used to specify the media type of the [text] contents of the [page].
-Its value should be a media type registered through the mechanisms of [RFC6838], as an `xsd:string`.
+Its value should be an [HTTP media type], as an `xsd:string`.
 
 #### 3.3.2 Page texts
 {: id="model.page.text"}
@@ -414,6 +411,9 @@ Texts continue until the end of the page.
 If a [page] ends before a [text] is opened, it has an empty text.
 The opening and closing `02 BEGIN` and `03 END` characters, if present, are not considered part of a text's contents.
 
+Texts must not contain [transmission characters] other than `1D INVALID`.
+Any other transmission characters within a text's contents should be replaced with `1D INVALID` on reading.
+
 If a `kixt:charset` with a valid object was declared in the [header] to the [page] containing a [text], it provides the character set of the text.
 Otherwise, the character set of the text is left to programs to determine.
 In the absence of prior knowledge, programs should assume that texts are in [Unicode].
@@ -424,6 +424,11 @@ As a consequence of the above rules, and in the absence of any special configura
 
 ## 4. Changelog {#changelog}
 
+{: id="changelog.2019-09-11"} <time>2019-09-11</time>
+
+: Clarified the distinction between [transmission characters][transmission character], [control characters][control character], and other characters defined in this specification; `7F NOTHING` is no longer a transmission character proper.
+
+: The [Unicode mapping] of `1A INVALID` is now `FFFD` inside of [headers][header] and [texts][text].
 
 {: id="changelog.2019-09-10"} <time>2019-09-10</time>
 

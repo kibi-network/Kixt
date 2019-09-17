@@ -1,6 +1,5 @@
 [RFC2119]: <https://tools.ietf.org/html/rfc2119> "Key words for use in RFCs to Indicate Requirement Levels"
 [RFC3987]: <https://tools.ietf.org/html/rfc3987> "Internationalized Resource Identifiers (IRIs)"
-[RFC6838]: <https://tools.ietf.org/html/rfc6838> "Media Type Specifications and Registration Procedures"
 [ABNF]: <https://tools.ietf.org/html/rfc5234> "Augmented BNF for Syntax Specifications: ABNF"
 [Turtle]: <https://www.w3.org/TR/turtle/> "RDF 1.1 Turtle"
 [RDF]: <https://www.w3.org/TR/rdf11-primer/> "RDF 1.1 Primer"
@@ -14,6 +13,9 @@
 
 [WTF-8]: <https://simonsapin.github.io/wtf-8/>
 [Generalized UTF-8]: <https://simonsapin.github.io/wtf-8/#generalized-utf8>
+
+[RFC7231]: https://tools.ietf.org/html/rfc7231 "Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content"
+[HTTP media type]: <https://tools.ietf.org/html/rfc7231#section-3.1.1.1>
 
 [XML 1.0]: <https://www.w3.org/TR/xml/> "Extensible Markup Language (XML) 1.0"
 [XML]: <https://www.w3.org/TR/xml11/> "Extensible Markup Language (XML) 1.1"
@@ -129,10 +131,6 @@
 [Kixt]: <{{ "/#dfn.Kixt" }}>
 
 [Kixt Ontology]: <https://vocab.KIBI.family/Kixt/#> "Kixt Ontology"
-[`kixt.Block`]: <{{ "/-/Charset/#class.Block" | absolute_url }}>
-[`kixt.Character`]: <{{ "/-/Charset/#class.Character" | absolute_url }}>
-[`kixt.Charset`]: <{{ "/-/Charset/#class.Charset" | absolute_url }}>
-[`kixt.Script`]: <{{ "/-/Charset/#class.Script" | absolute_url }}>
 
 [Kixt Charset]: <{{ "/-/Charset/" | absolute_url }}> "Kixt Charset"
 [Kixt Charset Model]: <{{ "/-/Charset/#dfn.Model" | absolute_url }}>
@@ -245,6 +243,34 @@
 [`<HexGlyph>`]: <{{ "/-/Charset/#prod.HexGlyph" | absolute_url }}>
 [`<Glyph>`]: <{{ "/-/Charset/#prod.Glyph" | absolute_url }}>
 [`<Glyphs>`]: <{{ "/-/Charset/#prod.Glyphs" | absolute_url }}>
+
+[Kixt Formatting and Controls]: <{{ "/-/Controls/" | absolute_url }}> "Kixt Formatting and Controls"
+[Kixt controls]: <{{ "/-/Controls/#dfn.Kixt_controls" | absolute_url }}>
+[control compatible]: <{{ "/-/Controls/#dfn.control_compatible" | absolute_url }}>
+[back]: <{{ "/-/Controls/#dfn.back" | absolute_url }}>
+[forward]: <{{ "/-/Controls/#dfn.forward" | absolute_url }}>
+[retract]: <{{ "/-/Controls/#dfn.retract" | absolute_url }}>
+[advance]: <{{ "/-/Controls/#dfn.advance" | absolute_url }}>
+[seek]: <{{ "/-/Controls/#dfn.seek" | absolute_url }}>
+[stop]: <{{ "/-/Controls/#dfn.stop" | absolute_url }}>
+[data string]: <{{ "/-/Controls/#dfn.data_string" | absolute_url }}>
+[string contents]: <{{ "/-/Controls/#dfn.string_contents" | absolute_url }}>
+[embed]: <{{ "/-/Controls/#dfn.embed" | absolute_url }}>
+[media type]: <{{ "/-/Controls/#dfn.media_type" | absolute_url }}>
+[embedded content]: <{{ "/-/Controls/#dfn.embedded_content" | absolute_url }}>
+[shift sequence]: <{{ "/-/Controls/#dfn.shift_sequence" | absolute_url }}>
+[shifted character]: <{{ "/-/Controls/#dfn.shifted_character" | absolute_url }}>
+[device tier]: <{{ "/-/Controls/#dfn.device_tier" | absolute_url }}>
+[operating system tier]: <{{ "/-/Controls/#dfn.operating_system_tier" | absolute_url }}>
+[user tier]: <{{ "/-/Controls/#dfn.user_tier" | absolute_url }}>
+[application tier]: <{{ "/-/Controls/#dfn.application_tier" | absolute_url }}>
+[format character]: <{{ "/-/Controls/#dfn.format_character" | absolute_url }}>
+[area]: <{{ "/-/Controls/#dfn.area" | absolute_url }}>
+[selection]: <{{ "/-/Controls/#dfn.selection" | absolute_url }}>
+[protection]: <{{ "/-/Controls/#dfn.protection" | absolute_url }}>
+[annotation]: <{{ "/-/Controls/#dfn.annotation" | absolute_url }}>
+[annotation text]: <{{ "/-/Controls/#dfn.annotation_text" | absolute_url }}>
+[noncharacter]: <{{ "/-/Controls/#dfn.noncharacter" | absolute_url }}>
 
 [Kixt Transmissions]: <{{ "/-/Transmissions/" | absolute_url }}> "Kixt Transmissions"
 [Kixt Transmission Format]: <{{ "/-/Transmissions/#dfn.Kixt_Transmission_Format" | absolute_url }}> "Kixt Transmissions"
